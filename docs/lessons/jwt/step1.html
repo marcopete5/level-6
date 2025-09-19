@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Authentication Basics — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Authentication Basics</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    A student will be able to describe and discuss
+                    authentication as a concept.
+                </li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/HUCLIkM-RC4"
+                    title="Authentication Basics"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/HUCLIkM-RC4"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="auth-basics-heading">
+                <h3 id="auth-basics-heading">Authentication Basics</h3>
+
+                <h4><strong>What is Authentication?</strong></h4>
+                <ul>
+                    <li>
+                        The process of verifying a user's identity to grant
+                        access to specific functionalities within an
+                        application.
+                    </li>
+                    <li>
+                        Imagine entering a club (application) with a valid ID
+                        (credentials) checked by a bouncer (authentication
+                        system).
+                    </li>
+                </ul>
+
+                <h4><strong>Why is Authentication Important?</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Security:</strong> Prevents unauthorized access
+                        to user data and protects sensitive information.
+                    </li>
+                    <li>
+                        <strong>Usability:</strong> Ensures users can access
+                        their own data, features, and personalize their
+                        experience.
+                    </li>
+                </ul>
+
+                <h4><strong>Types of Authentication:</strong></h4>
+                <ul>
+                    <li>
+                        Focus on token-based authentication in this lesson.
+                        Upcoming lessons will cover other types.
+                        <ul>
+                            <li>Session/cookie-based auth</li>
+                            <li>Token-based auth (covered here)</li>
+                            <li>OAuth (covered in upcoming lessons)</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>
+                    <strong>Token-based Authentication (Simplified):</strong>
+                </h4>
+                <ul>
+                    <li>User logs in (username/password sent to server).</li>
+                    <li>
+                        Server validates credentials against user data in the
+                        database.
+                    </li>
+                    <li>
+                        Successful login: Server creates a unique token (like an
+                        access card).
+                    </li>
+                    <li>
+                        Token sent back to user (saved in sessionStorage or
+                        localStorage).
+                    </li>
+                    <li>
+                        Client app sends the token with every request to the
+                        server for protected resources.
+                    </li>
+                    <li>
+                        Server checks the token for validity before granting
+                        access.
+                    </li>
+                    <li>Valid token: User receives requested content.</li>
+                    <li>Invalid token: User receives authorization error.</li>
+                    <li>
+                        Logout: Remove token from storage (like taking away an
+                        access card).
+                    </li>
+                </ul>
+
+                <h4>
+                    <strong
+                        >Benefits of Token-based Authentication
+                        (Optional):</strong
+                    >
+                </h4>
+                <ul>
+                    <li>Secure (avoids sending passwords back and forth).</li>
+                    <li>Scalable (avoids session management on server).</li>
+                    <li>
+                        Flexible (tokens can be stateless or store user info).
+                    </li>
+                </ul>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL-JWT, Lesson 001) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-001"
+            data-lesson-title="Authentication Basics"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-001"
+            data-lesson-title="Authentication Basics"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JSON Web Tokens (JWT) &amp; Dotenv — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">JSON Web Tokens (JWT) &amp; Dotenv</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    A student will be able to explain the purpose of a token.
+                </li>
+                <li>
+                    A student will be able to set up a dotenv file with a secret
+                    key.
+                </li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/m_ysvA9_a5Y"
+                    title="JSON Web Tokens (JWT) &amp; Dotenv"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/m_ysvA9_a5Y"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="protecting-secrets-heading">
+                <h3 id="protecting-secrets-heading">
+                    Protecting Secrets: The Role of .env and .gitignore Files
+                </h3>
+
+                <h4>User Object and Claims:</h4>
+                <p>
+                    Our user object and claims hold the keys to the
+                    kingdom—valuable information that must be safeguarded
+                    against unauthorized access.
+                </p>
+
+                <h4>Secret Key:</h4>
+                <p>
+                    Likewise, our secret key is the cornerstone of our security
+                    architecture. Without it, our JWTs lose their potency and
+                    become vulnerable to exploitation.
+                </p>
+
+                <h4>Mixing it Up:</h4>
+                <p>
+                    When we blend our user object and claims with our secret
+                    key, we concoct a recipe for security. But just like any
+                    secret recipe, we must keep it out of reach of prying eyes.
+                </p>
+
+                <h4>The Role of .env and .gitignore:</h4>
+                <p>
+                    Here's where the .env and .gitignore files come into play.
+                    The .env file serves as a secure vault for our secret key,
+                    keeping it separate from our codebase and inaccessible to
+                    unauthorized users. Meanwhile, the .gitignore file acts as a
+                    gatekeeper, ensuring that sensitive files like .env are not
+                    inadvertently uploaded to public repositories like GitHub.
+                </p>
+
+                <h5>Why .gitignore Matters:</h5>
+                <p>
+                    Consider this scenario: if our code were to be exposed on a
+                    public platform, such as GitHub, without the protection of
+                    .gitignore, our .env file—with its precious secret key—would
+                    be laid bare for all to see. By including .env (and other
+                    sensitive files) in .gitignore, we prevent this potential
+                    security breach and safeguard our system against malicious
+                    actors.
+                </p>
+
+                <h4>Key Takeaway:</h4>
+                <p>
+                    In the realm of web development and security, the .env and
+                    .gitignore files are not mere afterthoughts; they are
+                    essential components of our defense strategy. By leveraging
+                    these files effectively, we fortify our system against
+                    unauthorized access and maintain the confidentiality of our
+                    sensitive information.
+                </p>
+                <p>
+                    So, as we navigate the intricate landscape of cybersecurity,
+                    let's remember the critical roles played by .env and
+                    .gitignore files. They're not just lines of code or
+                    configuration settings; they're the guardians of our
+                    secrets, ensuring they remain safely under lock and key.
+                </p>
+            </div>
+
+            <!-- Mongoose lesson toggle AND everything that follows goes inside this toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/Q6YPsSYORlM"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=Q6YPsSYORlM"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <h3 id="enhancing-security-heading">
+                        <strong
+                            >Enhancing Security in a MERN Stack Application with
+                            Dotenv and JWT</strong
+                        >
+                    </h3>
+                    <p>
+                        <strong>Introduction</strong><br />In a MERN (MongoDB,
+                        Express.js, React, Node.js) stack application, managing
+                        sensitive information like API keys and configuration
+                        settings is essential, especially when implementing
+                        features like user authentication. One way to securely
+                        handle this information and enhance security is by using
+                        a package called "dotenv" in conjunction with JSON Web
+                        Tokens (JWT). These tools play a vital role in
+                        maintaining security and confidentiality in your
+                        application.
+                    </p>
+
+                    <h4><strong>What is Dotenv?</strong></h4>
+                    <ul>
+                        <li>
+                            Dotenv is a popular Node.js package that loads
+                            environment variables from a <code>.env</code> file
+                            into your application's process environment. It
+                            allows developers to store configuration settings
+                            and sensitive data outside of the application
+                            codebase, making it easier to maintain, share, and
+                            secure these values.
+                        </li>
+                    </ul>
+
+                    <h4><strong>The Role of Dotenv:</strong></h4>
+                    <ol>
+                        <li>
+                            <strong>Security:</strong> Dotenv keeps sensitive
+                            information, such as API keys, database credentials,
+                            and JWT secrets, separate from your source code.
+                            This separation prevents these critical details from
+                            being accidentally exposed in version control
+                            systems.
+                        </li>
+                        <li>
+                            <strong>Configuration Management:</strong> It
+                            simplifies configuration management by centralizing
+                            environment-specific variables in a single
+                            <code>.env</code> file. This is especially
+                            beneficial when working across various environments
+                            such as development, testing, and production.
+                        </li>
+                        <li>
+                            <strong>Cleaner Code:</strong> By utilizing
+                            environment variables from the
+                            <code>.env</code> file, you can access configuration
+                            settings without hardcoding them throughout your
+                            codebase. This approach results in cleaner, more
+                            maintainable code.
+                        </li>
+                    </ol>
+
+                    <h4><strong>The Role of JWT:</strong></h4>
+                    <ol>
+                        <li>
+                            <strong>User Authentication:</strong> JWT is
+                            commonly used in MERN applications to implement user
+                            authentication. When a user logs in, the server
+                            issues a JWT that contains claims about the user,
+                            and the client stores this token.
+                        </li>
+                        <li>
+                            <strong>Stateless and Secure:</strong> JWTs are
+                            stateless, meaning each request from the client to
+                            the server must include the JWT for authentication.
+                            This stateless nature makes JWT an ideal choice for
+                            web applications, and it ensures that user sessions
+                            remain secure and tamper-proof.
+                        </li>
+                        <li>
+                            <strong>Integration with Dotenv:</strong> The JWT
+                            secret key, which is used to sign and verify tokens,
+                            is often stored securely in your
+                            <code>.env</code> file. By combining Dotenv with
+                            JWT, you can securely manage your JWT secret and
+                            other sensitive information.
+                        </li>
+                    </ol>
+
+                    <h4><strong>Conclusion</strong></h4>
+                    <p>
+                        In a MERN stack application, Dotenv and JWT serve
+                        essential roles. Dotenv ensures the secure management of
+                        sensitive data and configuration settings, while JWT
+                        provides a robust solution for user authentication. By
+                        combining these tools, you can build a more secure and
+                        maintainable application that safeguards sensitive
+                        information while allowing for user authentication and
+                        authorization.
+                    </p>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 004) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-004"
+            data-lesson-title="JSON Web Tokens (JWT) &amp; Dotenv"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-004"
+            data-lesson-title="JSON Web Tokens (JWT) &amp; Dotenv"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

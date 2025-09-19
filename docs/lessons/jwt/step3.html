@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Creating User Model — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Creating User Model</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    A student will be able to explain the importance of the
+                    <code>unique</code> property.
+                </li>
+                <li>A student will be able to create a User model.</li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/qAb7kwgrY90"
+                    title="Creating User Model"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/qAb7kwgrY90"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="build-heading">
+                <h3 id="build-heading">
+                    Building a User Model with Mongoose &amp; Express
+                </h3>
+
+                <h4><strong>What is a User Model?</strong></h4>
+                <ul>
+                    <li>
+                        A representation of user data within a web application.
+                    </li>
+                    <li>
+                        Defines the structure and properties for storing user
+                        information (e.g., username, email, password).
+                    </li>
+                    <li>
+                        Mongoose, a popular ODM (Object Data Mapper) for
+                        MongoDB, allows us to create user models with features
+                        like validation and data manipulation.
+                    </li>
+                </ul>
+
+                <h4><strong>Why User Models?</strong></h4>
+                <ul>
+                    <li>
+                        Secure data storage: Ensures organized and secure
+                        storage of user information.
+                    </li>
+                    <li>
+                        Data consistency: Enforces a defined structure for user
+                        data, preventing inconsistencies.
+                    </li>
+                    <li>
+                        Mongoose functionalities: Leverages Mongoose's features
+                        for validation, data manipulation, and queries.
+                    </li>
+                </ul>
+
+                <h4><strong>Defining the User Schema</strong></h4>
+                <ul>
+                    <li>
+                        A schema acts as a blueprint defining the structure and
+                        data types for the user model.
+                    </li>
+                    <li>
+                        Common user schema properties:
+                        <ul>
+                            <li>username (string, required)</li>
+                            <li>
+                                email (string, required, unique) - Ensures
+                                unique email addresses for each user.
+                            </li>
+                            <li>
+                                password (string, required) - We'll cover secure
+                                password hashing in a dedicated lesson.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4><strong>Creating a Mongoose User Model</strong></h4>
+                <ol>
+                    <li>Import the Mongoose schema library.</li>
+                    <li>
+                        Define the user schema with properties and data types.
+                    </li>
+                    <li>
+                        Create a Mongoose model using the defined schema. This
+                        model allows you to interact with user data in your
+                        application.
+                    </li>
+                </ol>
+
+                <h4><strong>Key Points:</strong></h4>
+                <ul>
+                    <li>
+                        User models are crucial for managing user data
+                        effectively in Mongoose-based applications.
+                    </li>
+                    <li>
+                        The schema defines the structure and data types for user
+                        information.
+                    </li>
+                    <li>
+                        Mongoose models provide functionalities for creating,
+                        retrieving, updating, and deleting user data.
+                    </li>
+                </ul>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+const userSchema = new Schema({
+username: {
+type: String,
+required: true,
+lowercase: true,
+unique: true,
+},
+password: {
+type: String,
+required: true,
+},
+memberSince: {
+type: Date,
+default: Date.now,
+},
+isAdmin: {
+type: Boolean,
+default: false,
+},});
+      </code></pre>
+            </div>
+
+            <!-- Mongoose lesson + everything that follows, folded into the toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/x6xOA4bBNNs?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=x6xOA4bBNNs&amp;list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=5"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <!-- Everything after the Mongoose section goes here inside the toggle -->
+                    <h3 id="overview-heading">User Model Overview</h3>
+                    <p>
+                        This code will create the shape of the user data in our
+                        database model. It will use the mongoose Schema class as
+                        a base structure to take advantage of all the features
+                        included in this library, such as the property keywords
+                        which will enforce our rules. This schema will represent
+                        all the users in our database.
+                    </p>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+const userSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+    lowercase: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  memberSince: {
+    type: Date,
+    default: Date.now,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },  
+});
+        </code></pre>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 003) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-003"
+            data-lesson-title="Creating User Model"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-003"
+            data-lesson-title="Creating User Model"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

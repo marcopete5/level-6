@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Setting Up Your Server — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Setting Up Your Server</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>set up a basic server to start user authentication.</li>
+                <li>create a .gitignore file.</li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/ms4m6q94oYQ"
+                    title="Setting Up Your Server"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/ms4m6q94oYQ"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="protecting-heading">
+                <h3 id="protecting-heading">
+                    Protecting the Port and Connection String
+                </h3>
+                <p>
+                    When developing a web application, two critical pieces of
+                    information often need protection: the port on which your
+                    application runs and the database connection string.
+                    Understanding why these details are important and how to
+                    secure them is crucial for maintaining the security and
+                    stability of your application.
+                </p>
+
+                <h4>The Importance of Protecting the Port</h4>
+                <p>
+                    The port is the communication endpoint through which your
+                    server listens for requests. Typically, during development,
+                    you might use a standard port like 3000 or 4000. In
+                    production, the port might be determined by your hosting
+                    environment.
+                </p>
+
+                <h4>Why Protect the Port?</h4>
+                <ol>
+                    <li>
+                        <strong>Security</strong>: If malicious users know which
+                        port your application is running on, they could attempt
+                        to exploit any vulnerabilities or launch
+                        Denial-of-Service (DoS) attacks, potentially crashing
+                        your server.
+                    </li>
+                    <li>
+                        <strong>Configuration Management</strong>: Different
+                        environments (development, testing, production) might
+                        require different ports. Hardcoding the port can lead to
+                        conflicts and make the deployment process error-prone.
+                    </li>
+                    <li>
+                        <strong>Flexibility</strong>: By using environment
+                        variables, you can easily change the port without
+                        modifying your codebase, which simplifies deployment and
+                        reduces the risk of configuration errors.
+                    </li>
+                </ol>
+
+                <h4>Example</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.listen(process.env.PORT, () =&gt; {
+    console.log(`Server is running on port ${process.env.PORT}`);
+});
+      </code></pre>
+
+                <p>
+                    In this example, the port number is stored in an environment
+                    variable, allowing you to change it easily for different
+                    environments without changing the code.
+                </p>
+
+                <h4>The Importance of Protecting the Connection String</h4>
+                <p>
+                    The connection string is a URL-like string that contains the
+                    information needed to connect to your database, such as the
+                    database type, host, port, database name, and authentication
+                    credentials.
+                </p>
+
+                <h4>Why Protect the Connection String?</h4>
+                <ol>
+                    <li>
+                        <strong>Security</strong>: The connection string often
+                        includes sensitive information like usernames and
+                        passwords. If exposed, unauthorized users could gain
+                        access to your database, leading to data breaches and
+                        loss of sensitive information.
+                    </li>
+                    <li>
+                        <strong>Maintainability</strong>: Environment variables
+                        make it easier to manage database configurations across
+                        different environments. This allows you to use different
+                        databases for development, testing, and production
+                        without changing your code.
+                    </li>
+                    <li>
+                        <strong>Separation of Concerns</strong>: Keeping
+                        configuration data separate from your code helps
+                        maintain a clean codebase and follows best practices in
+                        software development.
+                    </li>
+                </ol>
+
+                <h4>Example</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+async function connectToDb() {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('connected to db');
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+connectToDb();
+      </code></pre>
+
+                <p>
+                    Here, the <code>MONGO_URI</code> environment variable stores
+                    the MongoDB connection string. This approach secures the
+                    connection details and makes it easy to change the database
+                    configuration for different environments.
+                </p>
+
+                <h4>Adding <code>.env</code> to <code>.gitignore</code></h4>
+                <p>
+                    To ensure that your environment variables remain secure,
+                    it's important to exclude your <code>.env</code> file from
+                    version control by adding it to your
+                    <code>.gitignore</code> file.
+                </p>
+
+                <h4>Why Add <code>.env</code> to <code>.gitignore</code>?</h4>
+                <ol>
+                    <li>
+                        <strong>Prevent Sensitive Information Exposure</strong>:
+                        By excluding the <code>.env</code> file from your
+                        repository, you prevent sensitive information like
+                        database credentials, API keys, and other
+                        environment-specific settings from being exposed to
+                        anyone who has access to your codebase.
+                    </li>
+                    <li>
+                        <strong>Reduce Risk of Accidental Sharing</strong>: When
+                        working in a collaborative environment or sharing your
+                        code publicly, there is a risk of accidentally
+                        committing sensitive information. Adding the
+                        <code>.env</code> file to <code>.gitignore</code> helps
+                        mitigate this risk.
+                    </li>
+                    <li>
+                        <strong>Maintain Clean Repositories</strong>: Keeping
+                        configuration files out of your version control system
+                        helps maintain a clean repository and ensures that the
+                        codebase remains free of environment-specific settings
+                        that could cause conflicts or issues during deployment.
+                    </li>
+                </ol>
+
+                <h4>Summary</h4>
+                <p>
+                    Using <code>dotenv</code> to manage your port and connection
+                    string provides several benefits:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Security</strong>: Protects sensitive
+                        information from being exposed in the codebase.
+                    </li>
+                    <li>
+                        <strong>Configuration Management</strong>: Simplifies
+                        the process of managing different configurations for
+                        various environments.
+                    </li>
+                    <li>
+                        <strong>Flexibility</strong>: Makes it easy to update
+                        configurations without changing the code.
+                    </li>
+                    <li>
+                        <strong>Repository Cleanliness</strong>: Adding the
+                        <code>.env</code> file to
+                        <code>.gitignore</code> ensures that sensitive
+                        information is not accidentally committed to the
+                        repository.
+                    </li>
+                </ul>
+                <p>
+                    By adhering to these practices, you ensure that your
+                    application remains secure, maintainable, and flexible,
+                    making it easier to manage and deploy across different
+                    environments.
+                </p>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/gtexQtUbn90?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=gtexQtUbn90&amp;list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=3&amp;t=0s"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <h3 id="clone-heading">
+                        <strong
+                            >Commands to clone the specific sections:</strong
+                        >
+                    </h3>
+
+                    <h4><strong>Part 1 start:</strong></h4>
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+git clone -b part-1-start https://github.com/VSchool/rlm-token-auth-series-context.git
+cd rlm-token-auth-series-context
+code .
+npm install
+rm -rf .git
+      </code></pre>
+
+                    <h4><strong>Part 1 end:</strong></h4>
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+git clone -b part-1-end https://github.com/VSchool/rlm-token-auth-series-context.git
+cd rlm-token-auth-series-context
+code .
+npm install
+rm -rf .git
+      </code></pre>
+
+                    <p>
+                        <a
+                            href="https://github.com/VSchool/rlm-token-auth-series-context.git"
+                            target="_blank"
+                            rel="noopener"
+                            >GitHub - VSchool/rlm-token-auth-series-context</a
+                        >
+                    </p>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 002) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-002"
+            data-lesson-title="Setting Up Your Server"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-002"
+            data-lesson-title="Setting Up Your Server"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>
