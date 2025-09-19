@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Creating a Signup Route — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Creating a Signup Route</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    A student will be able to create a signup route in there
+                    server.
+                </li>
+                <li>
+                    A student will be able to test their route using postman.
+                </li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/unqGhuVfjpo"
+                    title="Creating a Signup Route"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/unqGhuVfjpo"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="user-reg-endpoint">
+                <h3 id="user-reg-endpoint">
+                    <strong>User Registration Endpoint</strong>
+                </h3>
+                <p>
+                    The <code>/signup</code> endpoint is a crucial part of the
+                    authentication system of our application. It handles the
+                    registration process for new users, allowing them to create
+                    an account and gain access to the system.
+                </p>
+
+                <h4><strong>How it Works:</strong></h4>
+                <ol>
+                    <li>
+                        <strong>User Check:</strong> Upon receiving a POST
+                        request to <code>/signup</code>, the server first checks
+                        if the requested username is already taken. This is done
+                        by querying the database to find a user document with
+                        the provided username. If a user with the same username
+                        already exists, the server responds with a status code
+                        of 403 (Forbidden) and an error message indicating that
+                        the username is already taken.
+                    </li>
+                    <li>
+                        <strong>User Creation:</strong> If the requested
+                        username is available, the server proceeds to create a
+                        new user object based on the data provided in the
+                        request body. This user object typically includes
+                        information such as username, email, password (hashed
+                        for security), and any other relevant user data. The
+                        password is securely hashed before being stored in the
+                        database to ensure the security of user credentials.
+                    </li>
+                    <li>
+                        <strong>Token Generation:</strong> After successfully
+                        saving the new user to the database, the server
+                        generates a JSON Web Token (JWT) to authenticate the
+                        newly created user. This token contains the user's
+                        information and is signed using a secret key stored in
+                        the environment variables. The JWT serves as a means of
+                        authenticating the user in subsequent requests without
+                        the need for re-entering credentials.
+                    </li>
+                    <li>
+                        <strong>Response:</strong> Finally, the server responds
+                        with a status code of 201 (Created) along with a JSON
+                        object containing the newly created user's information
+                        and the generated JWT token. This allows the client to
+                        obtain the necessary credentials for further
+                        authentication and access to protected resources.
+                    </li>
+                </ol>
+
+                <h4><strong>Error Handling:</strong></h4>
+                <p>
+                    In the event of an unexpected error during the registration
+                    process, such as a database connection error or an internal
+                    server issue, the server responds with a status code of 500
+                    (Internal Server Error). This informs the client that
+                    something went wrong on the server side and prompts them to
+                    try again later.
+                </p>
+
+                <h4><strong>Key Takeaway:</strong></h4>
+                <p>
+                    The <code>/signup</code> endpoint serves as the entry point
+                    for new users to register with our application. By following
+                    a series of steps, including username availability check,
+                    user creation, token generation, and response delivery, the
+                    endpoint ensures a smooth and secure registration process
+                    for our users.
+                </p>
+            </div>
+
+            <!-- Mongoose lesson toggle AND everything that follows goes inside this toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/ZGHIwssTiJ8?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=7"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=ZGHIwssTiJ8&amp;list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=7"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <hr />
+
+                    <h3 id="code-explanation">
+                        <strong>Code Explanation: User Signup</strong>
+                    </h3>
+
+                    <h4>Overview</h4>
+                    <p>
+                        This code handles the user signup process for a
+                        server-side JavaScript application. It uses an HTTP POST
+                        request to the '/signup' endpoint, expecting user
+                        information in the request body. The code checks if the
+                        provided username already exists in the database,
+                        creates a new user if it doesn't, generates a JSON Web
+                        Token (JWT), and sends it along with the user data as a
+                        response. Additionally, it provides error handling for
+                        various scenarios.
+                    </p>
+
+                    <h4>Code</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+authRouter.post('/signup', (req, res, next) =&gt; {
+  // Code for handling the POST request to '/signup' goes here
+})
+        </code></pre>
+
+                    <h4>User Lookup</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+User.findOne({ username: req.body.username.toLowerCase() }, (err, user) =&gt; {
+  // Code for looking up a user goes here
+})
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            This section explains how the code looks up an
+                            existing user based on the provided username in the
+                            request body.
+                        </li>
+                        <li>
+                            It uses the <code>User</code> model for the database
+                            query, ensuring a case-insensitive search with
+                            <code>.toLowerCase()</code>.
+                        </li>
+                    </ul>
+
+                    <h4>Error Handling for User Lookup</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+if (err) {
+  res.status(500);
+  return next(err);
+}
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            This part handles errors that may occur during the
+                            user lookup process.
+                        </li>
+                        <li>
+                            It sets the HTTP response status to 500 (Internal
+                            Server Error) and passes the error to the next
+                            middleware using <code>next(err)</code>.
+                        </li>
+                    </ul>
+
+                    <h4>User Existence Check</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+if (user) {
+  res.status(403);
+  return next(new Error('Username is already taken'));
+}
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            Here, the code checks if a user with the provided
+                            username already exists in the database.
+                        </li>
+                        <li>
+                            If a user is found, it sets the HTTP response status
+                            to 403 (Forbidden) and sends an error response with
+                            the message "Username is already taken." An error is
+                            also passed to the next middleware.
+                        </li>
+                    </ul>
+
+                    <h4>User Creation</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+const newUser = new User(req.body);
+newUser.save((err, savedUser) =&gt; {
+  // Code for creating a new user goes here
+});
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            If the username is not found in the database, a new
+                            <code>User</code> instance is created using the data
+                            from the request body.
+                        </li>
+                        <li>
+                            This user is then saved to the database, and any
+                            errors during the save operation are handled.
+                        </li>
+                    </ul>
+
+                    <h4>Error Handling for User Creation</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+if (err) {
+  res.status(500);
+  return next(err);
+}
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            Similar to the error handling for the user lookup,
+                            this section deals with errors during the user
+                            creation and save process.
+                        </li>
+                        <li>
+                            It sets the HTTP response status to 500 and passes
+                            the error to the next middleware.
+                        </li>
+                    </ul>
+
+                    <h4>Token Generation</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+const token = jwt.sign(savedUser.toObject(), process.env.SECRET);
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            After successfully creating the new user, a JSON Web
+                            Token (JWT) is generated. It encodes the user's
+                            information and a secret key stored in the
+                            environment variable
+                            (<code>process.env.SECRET</code>).
+                        </li>
+                    </ul>
+
+                    <h4>Response to Client</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+return res.status(201).send({ token, user: savedUser.toObject() });
+        </code></pre>
+
+                    <ul>
+                        <li>
+                            If the process goes smoothly, a response with a
+                            status code of 201 (Created) is sent to the client.
+                        </li>
+                        <li>
+                            The response includes the generated JWT and the user
+                            data in the response body.
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 005) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-005"
+            data-lesson-title="Creating a Signup Route"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-005"
+            data-lesson-title="Creating a Signup Route"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>
