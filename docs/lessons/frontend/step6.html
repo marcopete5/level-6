@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Axios Interceptors &amp; Adding/Getting Todos — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">
+                    Axios Interceptors &amp; Adding/Getting Todos
+                </h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        A student will create an instance of axios to carry the
+                        user’s token
+                    </li>
+                    <li>
+                        A student will be able to make a get request to get the
+                        todo’s.
+                    </li>
+                    <li>
+                        A student will create a post request to add new todo’s
+                        to the database.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="video-heading">
+                <h3 id="video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/eUq8HgB48As"
+                    title="Axios Interceptors & Adding/Getting Todos"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/eUq8HgB48As"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="explanation-heading">
+                <h3 id="explanation-heading">
+                    Explanation of Code Interaction: Axios Request with
+                    Authentication
+                </h3>
+                <p>
+                    The provided code blocks illustrate how axios, specifically
+                    <code>userAxios</code>, is utilized to facilitate
+                    authenticated requests from the frontend to the backend,
+                    specifically for fetching user-specific issues. Let&#39;s
+                    explore how these blocks work together to achieve this
+                    functionality.
+                </p>
+
+                <h4>
+                    <strong><code>userAxios</code> Configuration</strong>
+                </h4>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+const userAxios = axios.create();
+
+userAxios.interceptors.request.use(config =&gt; {
+    const token = localStorage.getItem(&#39;token&#39;);
+    config.headers.Authorization = `Bearer ${token}`;
+    return config;
+});
+      </code></pre>
+
+                <ul>
+                    <li>
+                        <strong>Configuration</strong>:
+                        <code>userAxios</code> is created using
+                        <code>axios.create()</code> to customize axios
+                        instances.
+                    </li>
+                    <li>
+                        <strong>Interceptors</strong>: An interceptor is added
+                        to <code>userAxios</code> to modify outgoing requests.
+                        Here,
+                        <code>localStorage.getItem(&#39;token&#39;)</code>
+                        retrieves the JWT token stored in the browser&#39;s
+                        localStorage.
+                    </li>
+                    <li>
+                        <strong>Authorization Header</strong>: The interceptor
+                        sets the <code>Authorization</code> header on every
+                        request with the retrieved token, ensuring
+                        authentication for protected routes.
+                    </li>
+                </ul>
+
+                <h4>
+                    <strong><code>getUserIssues</code> Function</strong>
+                </h4>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+async function getUserIssues() {
+    try {
+        const res = await userAxios.get(&#39;/api/main/issues/user&#39;);
+        setUserState(prevState =&gt; ({
+            ...prevState,
+            issues: res.data
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+}
+      </code></pre>
+
+                <ul>
+                    <li>
+                        <strong>Functionality</strong>:
+                        <code>getUserIssues</code> is an asynchronous function
+                        that fetches user-specific issues from the backend.
+                    </li>
+                    <li>
+                        <strong>axios GET Request</strong>: It uses
+                        <code>userAxios</code> (configured with the token
+                        interceptor) to send a GET request to
+                        <code>/api/main/issues/user</code>.
+                    </li>
+                    <li>
+                        <strong>State Update</strong>: Upon receiving a
+                        successful response (<code>res.data</code> contains the
+                        fetched issues), <code>setUserState</code> updates the
+                        frontend state to reflect the fetched issues.
+                    </li>
+                    <li>
+                        <strong>Error Handling</strong>: The function includes
+                        error handling to log any encountered errors to the
+                        console.
+                    </li>
+                </ul>
+
+                <h4><strong>Interaction and Workflow</strong></h4>
+                <ol>
+                    <li>
+                        <strong>Frontend Request (getUserIssues)</strong>:
+                        <ul>
+                            <li>
+                                The frontend calls <code>getUserIssues</code>,
+                                which uses <code>userAxios</code> configured
+                                with the token interceptor.
+                            </li>
+                            <li>
+                                The interceptor automatically adds the JWT token
+                                to the request headers.
+                            </li>
+                            <li>
+                                This ensures that the backend can authenticate
+                                and authorize the request based on the
+                                user&#39;s token.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Backend Route (GET &#39;/user&#39;)</strong>:
+                        <ul>
+                            <li>
+                                Upon receiving the GET request at
+                                <code>/api/main/issues/user</code>, the backend
+                                extracts the user&#39;s ID
+                                (<code>req.auth._id</code>) from the JWT token.
+                            </li>
+                            <li>
+                                It queries the database for issues where the
+                                <code>userId</code> matches
+                                <code>req.auth._id</code>.
+                            </li>
+                            <li>
+                                The found issues are returned as a response
+                                (<code>foundIssues</code>).
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Data Flow</strong>:
+                        <ul>
+                            <li>
+                                Frontend receives the response from
+                                <code>userAxios.get</code> in
+                                <code>getUserIssues</code>.
+                            </li>
+                            <li>
+                                It updates the <code>userState</code> to display
+                                the fetched user-specific issues on the frontend
+                                interface.
+                            </li>
+                            <li>
+                                Any errors encountered during the process are
+                                logged to the console for debugging purposes.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4><strong>Conclusion</strong></h4>
+                <p>
+                    Through these interconnected code blocks,
+                    <code>userAxios</code> ensures that authenticated requests
+                    from the frontend securely reach the backend, where backend
+                    routes handle these requests by querying and returning
+                    relevant data based on the user&#39;s authentication token.
+                    This setup allows for efficient and secure communication
+                    between the frontend and backend while maintaining user
+                    privacy and data integrity.
+                </p>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/FYeTSp1gHTo?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=FYeTSp1gHTo&amp;list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=17"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+
+                        <h3><strong>Code Explanation:</strong></h3>
+
+                        <pre><code class="language-jsx" role="region" aria-label="Code block">
+const userAxios = axios.create()
+          </code></pre>
+
+                        <pre><code class="language-jsx" role="region" aria-label="Code block">
+userAxios.interceptors.request.use(config =&gt; {
+    const token = localStorage.getItem(&#39;token&#39;)
+    config.headers.Authorization = `Bearer ${token}`
+    return config
+})
+          </code></pre>
+
+                        <p>
+                            In the code snippet, a new Axios instance is created
+                            and assigned to the variable <code>userAxios</code>.
+                            This allows us to customize the behavior of Axios
+                            for specific use cases, such as handling user
+                            authentication.
+                        </p>
+                        <p>
+                            The
+                            <code>userAxios.interceptors.request.use</code>
+                            method is used to attach an interceptor to the Axios
+                            instance. Interceptors are functions that can be
+                            executed before an HTTP request is sent or after a
+                            response is received. In this case, we are using a
+                            request interceptor.
+                        </p>
+                        <ol>
+                            <li>
+                                When a request is made using
+                                <code>userAxios</code>, the interceptor function
+                                is executed.
+                            </li>
+                            <li>
+                                It retrieves an authentication token from the
+                                local storage. The
+                                <code
+                                    >localStorage.getItem(&#39;token&#39;)</code
+                                >
+                                method is used to access a token that is
+                                presumably stored when the user logs in.
+                            </li>
+                            <li>
+                                The token is added to the request headers. The
+                                <code>config.headers.Authorization</code>
+                                property is set to include the token using the
+                                Bearer Token authentication format.
+                            </li>
+                            <li>
+                                Finally, the modified <code>config</code> object
+                                is returned, allowing the request to proceed
+                                with the added authentication token.
+                            </li>
+                        </ol>
+
+                        <p><strong>Use Case:</strong></p>
+                        <p>
+                            This code is commonly used in web applications where
+                            user authentication is required. By adding an
+                            authentication token to the request headers
+                            automatically, it ensures that authenticated users
+                            can access protected resources without the need to
+                            manually add the token to every request.
+                        </p>
+
+                        <p><strong>References:</strong></p>
+                        <ul>
+                            <li>
+                                <a
+                                    href="https://axios-http.com/docs/intro"
+                                    target="_blank"
+                                    rel="noopener"
+                                    >Axios Documentation</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+                                    target="_blank"
+                                    rel="noopener"
+                                    >MDN Web Docs - Window.localStorage</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-css.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section FRONTEND_AUTH, Lesson 006) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-006"
+            data-lesson-title="Axios Interceptors &amp; Adding/Getting Todos"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-006"
+            data-lesson-title="Axios Interceptors &amp; Adding/Getting Todos"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

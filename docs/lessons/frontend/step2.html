@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Creating Context for the User — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Creating Context for the User</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        A student will be able to create the beginning of their
+                        User Provider context.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video">
+                <h3 id="lesson-video">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/86xezlZDYYw"
+                    title="Creating Context for the User"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/86xezlZDYYw"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="utilizing-context-heading">
+                <h3 id="utilizing-context-heading">
+                    Utilizing Context Files for User Authentication in a
+                    MERN/Vite App
+                </h3>
+                <p>
+                    In modern web development, managing user authentication and
+                    authorization efficiently is critical for providing a secure
+                    and seamless user experience. When building a MERN stack
+                    application with Vite as the build tool, leveraging context
+                    files in React can streamline this process. Here&#39;s an
+                    overview of why you should use context files for
+                    authentication and how they manage user tokens and
+                    permissions.
+                </p>
+
+                <h4>Why Use Context Files for Authentication?</h4>
+                <ol>
+                    <li>
+                        <strong>Centralized State Management</strong>:
+                        <ul>
+                            <li>
+                                Context files allow you to maintain a
+                                centralized state for user authentication.
+                            </li>
+                            <li>
+                                Makes it easier to manage and access user data
+                                and authentication states across various
+                                components without prop drilling.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong
+                            >Improved Code Readability and Maintenance</strong
+                        >:
+                        <ul>
+                            <li>
+                                Separating authentication logic into a context
+                                results in a more modular and easier to maintain
+                                codebase.
+                            </li>
+                            <li>
+                                Separates concerns between the UI and
+                                authentication logic, leading to cleaner code.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Efficient Re-rendering</strong>:
+                        <ul>
+                            <li>
+                                Only components that consume the context will
+                                re-render when the context value changes,
+                                leading to better performance.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Scalability</strong>:
+                        <ul>
+                            <li>
+                                Helps in scaling the app without introducing
+                                complexity.
+                            </li>
+                            <li>
+                                Adding new features related to user permissions
+                                and roles becomes easier.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4>Functionality of Context Files in User Authentication</h4>
+                <p>
+                    A context file for authentication typically manages the
+                    following aspects:
+                </p>
+                <ol>
+                    <li>
+                        <strong>User Authentication State</strong>:
+                        <ul>
+                            <li>
+                                <strong>Storing Tokens</strong>: Keeps track of
+                                the user&#39;s authentication token (e.g., JWT)
+                                and refresh tokens.
+                            </li>
+                            <li>
+                                <strong>User Information</strong>: Holds user
+                                details like username, roles, and permissions,
+                                which are essential for authorization.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Authentication Actions</strong>:
+                        <ul>
+                            <li>
+                                <strong>Login/Logout</strong>: Functions for
+                                logging in and logging out, updating the context
+                                state accordingly.
+                            </li>
+                            <li>
+                                <strong>Token Management</strong>: Handles token
+                                storage, retrieval, and refreshing mechanisms to
+                                ensure the user remains authenticated.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Access Control</strong>:
+                        <ul>
+                            <li>
+                                <strong>Role-Based Access Control (RBAC)</strong
+                                >: Provides utilities to check user roles and
+                                permissions, enabling components to render
+                                conditionally based on user rights.
+                            </li>
+                            <li>
+                                <strong>Protected Routes</strong>: Integration
+                                with routing to guard routes and redirect
+                                unauthenticated users or those without
+                                sufficient permissions.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4>Conclusion</h4>
+                <p>
+                    Utilizing context files for managing user authentication in
+                    a MERN/Vite app provides a robust and scalable solution. It
+                    centralizes the authentication logic, improves
+                    maintainability, and ensures efficient state management
+                    across the application. This approach not only enhances
+                    security but also streamlines the development process,
+                    allowing you to build feature-rich applications with ease.
+                </p>
+            </div>
+
+            <!-- Mongoose toggle: EVERYTHING after the heading lives inside this details -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/Jpbz4oDmyuA?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=Jpbz4oDmyuA&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=12&t=0s"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section FRONTEND_AUTH, Lesson 002) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-002"
+            data-lesson-title="Creating Context for the User"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-002"
+            data-lesson-title="Creating Context for the User"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

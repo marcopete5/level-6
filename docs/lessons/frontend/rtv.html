@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rock the Vote: Frontend Development — Assignment</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-css.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <style>
+            /* a11y touch */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Rock the Vote: Frontend Development</h1>
+                <h2>Assignment</h2>
+            </header>
+
+            <div class="section" aria-labelledby="intro-heading">
+                <p>
+                    In this phase of the project, you will build the frontend
+                    components to complement the backend you have set up. Your
+                    frontend application should integrate seamlessly with the
+                    backend API to provide user authentication, profile
+                    management, and issue handling functionality. Follow the
+                    instructions below to complete this assignment effectively.
+                </p>
+                <hr />
+            </div>
+
+            <div class="section" aria-labelledby="requirements-heading">
+                <h3 id="requirements-heading">Requirements</h3>
+                <p>Your frontend should include the following components:</p>
+
+                <h4>1. Authentication</h4>
+                <p>Implement user authentication functionalities including:</p>
+                <ul>
+                    <li><strong>Login Form</strong>: Allow users to log in.</li>
+                    <li>
+                        <strong>Signup Form</strong>: Allow new users to sign
+                        up.
+                    </li>
+                    <li>
+                        <strong>Logout Functionality</strong>: Implement a way
+                        for users to log out.
+                    </li>
+                </ul>
+                <p>
+                    <strong>Goal</strong>: Reuse components where possible to
+                    maintain consistency and avoid code duplication.
+                </p>
+
+                <h4>2. Context Management</h4>
+                <p>Utilize React Context to manage global state for:</p>
+                <ul>
+                    <li>
+                        <strong>User Authentication State</strong>: Manage
+                        logged-in user details and authentication status.
+                    </li>
+                    <li>
+                        <strong>API Requests</strong>: Implement functions to
+                        interact with your backend API (<code>userAxios</code>)
+                        for login, signup, logout, and fetching user-specific
+                        data.
+                    </li>
+                </ul>
+
+                <h4>3. Profile Page</h4>
+                <p>Create a profile page that includes:</p>
+                <ul>
+                    <li>
+                        <strong>New Issue Form</strong>: Allow users to add new
+                        issues.
+                    </li>
+                    <li>
+                        <strong>List of User's Issues</strong>: Display a list
+                        of issues created by the logged-in user.
+                    </li>
+                </ul>
+                <p>
+                    <strong>Goal</strong>: Reuse components across different
+                    pages (like the public page) to maintain consistency and
+                    improve maintainability.
+                </p>
+
+                <h4>4. Public Page</h4>
+                <p>Implement a public page that includes:</p>
+                <ul>
+                    <li>
+                        <strong>List of All Issues</strong>: Display a list of
+                        all issues created by all users.
+                    </li>
+                </ul>
+                <p>
+                    <strong>Goal</strong>: Reuse components from the profile
+                    page where applicable to maintain consistency in design and
+                    functionality.
+                </p>
+            </div>
+        </main>
+
+        <!-- Lesson entry (Level 6, Section FRONTEND_AUTH, Assignment 008) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-008"
+            data-lesson-title="Rock the Vote: Frontend Development"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-008"
+            data-lesson-title="Rock the Vote: Frontend Development"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

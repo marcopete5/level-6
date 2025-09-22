@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Saving the User &amp; Token — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Saving the User &amp; Token</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        A student will be able to use local storage to store a
+                        user’s data and token.
+                    </li>
+                    <li>
+                        A student will be able to use the user’s data in their
+                        app.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="watch-note">
+                <aside id="watch-note">
+                    <p>
+                        <span class="Grok">💡</span>
+                        <strong
+                            >Watch both videos below before moving on!</strong
+                        >
+                    </p>
+                </aside>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/UiH0HTr-aRk"
+                    title="Saving user & token — Part 1"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/UiH0HTr-aRk"
+                        target="_blank"
+                        rel="noopener"
+                        >Open Part 1 in Browser</a
+                    >
+                </p>
+
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/QynKZjwiAwc"
+                    title="Saving user & token — Part 2"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/QynKZjwiAwc"
+                        target="_blank"
+                        rel="noopener"
+                        >Open Part 2 in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="overview-heading">
+                <h3 id="overview-heading">Overview</h3>
+                <p>
+                    In this video, we&#39;ll build upon our sign-up and login
+                    functions by improving how we handle user state and local
+                    storage. We will ensure that user information persists even
+                    after page refreshes.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="steps-heading">
+                <h3 id="steps-heading">Steps and Key Concepts</h3>
+
+                <h4><strong>1. Initial Setup</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Inspecting Tools</strong>: We&#39;ll use the
+                        application tab in DEV tools to check local storage and
+                        the React DEV tools to inspect state.
+                    </li>
+                    <li>
+                        <strong>Current State</strong>: Our sign-up and login
+                        functions only console log <code>res.data</code>.
+                        We&#39;ll update this to set user state.
+                    </li>
+                </ul>
+
+                <h4><strong>2. Updating State</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Login Function</strong>: We&#39;ll extract the
+                        user and token from <code>res.data</code> and set the
+                        user state.
+                    </li>
+                    <li>
+                        <strong>State Preservation</strong>: We&#39;ll ensure
+                        the user state updates correctly without losing any
+                        existing data.
+                    </li>
+                </ul>
+
+                <h4><strong>3. Persistent State with Local Storage</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Problem</strong>: User state is lost on page
+                        refresh.
+                    </li>
+                    <li>
+                        <strong>Solution</strong>: Save user data and token in
+                        local storage.
+                    </li>
+                    <li>
+                        <strong>Implementation</strong>:
+                        <ul>
+                            <li>
+                                Use
+                                <code
+                                    >localStorage.setItem(&quot;token&quot;,
+                                    token)</code
+                                >
+                                to save the token.
+                            </li>
+                            <li>
+                                Use
+                                <code
+                                    >localStorage.setItem(&quot;user&quot;,
+                                    JSON.stringify(user))</code
+                                >
+                                to save the user as a JSON string.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4><strong>4. Loading State from Local Storage</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Initialization</strong>: Check local storage for
+                        user and token when the app initializes and set the
+                        state accordingly.
+                    </li>
+                    <li>
+                        <strong>Code Addition</strong>:
+                        <ul>
+                            <li>
+                                Use
+                                <code
+                                    >JSON.parse(localStorage.getItem(&quot;user&quot;))</code
+                                >
+                                to retrieve and parse the user data.
+                            </li>
+                            <li>
+                                Use
+                                <code
+                                    >localStorage.getItem(&quot;token&quot;)</code
+                                >
+                                for the token.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4><strong>5. Practical Implementation</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Testing</strong>: Log in and check that the user
+                        and token persist in local storage and state, even after
+                        page refreshes.
+                    </li>
+                    <li>
+                        <strong>Updating the Profile Component</strong>: Display
+                        the username on the profile page by consuming the
+                        context from the user state.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="takeaways-heading">
+                <h3 id="takeaways-heading">Key Takeaways</h3>
+                <ul>
+                    <li>
+                        <strong>State Management</strong>: Properly managing
+                        state ensures a seamless user experience across
+                        sessions.
+                    </li>
+                    <li>
+                        <strong>Local Storage</strong>: Using local storage
+                        allows user data to persist beyond a single session,
+                        solving the issue of state loss on refresh.
+                    </li>
+                    <li>
+                        <strong>Context and Components</strong>: Effectively use
+                        context to manage and display user data across different
+                        components.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="usenavigate-heading">
+                <h3 id="usenavigate-heading">useNavigate()</h3>
+                <p>
+                    The <code>useNavigate</code> hook in
+                    <code>react-router-dom</code> is another essential tool for
+                    managing navigation programmatically in React applications.
+                    It provides a more flexible and imperative approach to
+                    routing compared to the declarative
+                    <code>Navigate</code> component. Here are some reasons why
+                    <code>useNavigate</code> is important:
+                </p>
+
+                <h4>Benefits of <code>useNavigate</code></h4>
+                <ol>
+                    <li>
+                        <strong>Imperative Navigation</strong>:
+                        <code>useNavigate</code> allows you to navigate to
+                        different routes imperatively, which is useful in
+                        functions or event handlers where a component cannot
+                        directly return JSX elements.
+                    </li>
+                    <li>
+                        <strong>Complex Navigation Logic</strong>: It provides
+                        more flexibility for complex navigation logic that might
+                        involve conditionally determining the next route or
+                        performing side effects before navigation.
+                    </li>
+                    <li>
+                        <strong>Dynamic Routing</strong>: With
+                        <code>useNavigate</code>, you can dynamically construct
+                        the path to navigate to, making it easier to work with
+                        routes that require parameters or query strings.
+                    </li>
+                    <li>
+                        <strong>Consistency with Hooks</strong>: It fits well
+                        within the React Hooks ecosystem, allowing you to use
+                        the same pattern for navigation as you do for state and
+                        side effects.
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section" aria-labelledby="security-routing-goals">
+                <h3 id="security-routing-goals">
+                    Goals of Adding Password Security and Handling Automatic
+                    Routing Using Tokens
+                </h3>
+
+                <h4><strong>Password Security</strong></h4>
+                <h5><strong>Goals:</strong></h5>
+                <ol>
+                    <li>
+                        <strong>Protect User Credentials</strong>: Ensuring that
+                        passwords are stored securely prevents unauthorized
+                        access to user accounts. By hashing passwords before
+                        storing them, even if the database is compromised,
+                        attackers cannot easily retrieve the original passwords.
+                    </li>
+                    <li>
+                        <strong>Prevent Data Breaches</strong>: Proper password
+                        security minimizes the risk of data breaches. Strong
+                        hashing algorithms make it computationally infeasible to
+                        reverse-engineer passwords, thus protecting users&#39;
+                        personal information.
+                    </li>
+                    <li>
+                        <strong>Maintain User Trust</strong>: Implementing
+                        robust password security measures helps build and
+                        maintain user trust. Users are more likely to use and
+                        recommend a platform that prioritizes their security and
+                        privacy.
+                    </li>
+                    <li>
+                        <strong>Compliance with Best Practices</strong>:
+                        Adhering to password security best practices, such as
+                        using bcrypt for hashing, ensures that the application
+                        meets industry standards and legal requirements for data
+                        protection.
+                    </li>
+                </ol>
+
+                <h4>
+                    <strong>Handling Automatic Routing Using Tokens</strong>
+                </h4>
+                <h5><strong>Goals:</strong></h5>
+                <ol>
+                    <li>
+                        <strong>Seamless Authentication</strong>: Using tokens,
+                        such as JSON Web Tokens (JWT), allows for seamless
+                        authentication across the application. Once a user logs
+                        in, they receive a token that can be used for subsequent
+                        requests, eliminating the need to repeatedly enter
+                        credentials.
+                    </li>
+                    <li>
+                        <strong>Stateless Sessions</strong>: Tokens enable
+                        stateless authentication, meaning the server does not
+                        need to store session information. This reduces server
+                        load and simplifies scaling the application.
+                    </li>
+                    <li>
+                        <strong>Enhanced Security</strong>: Tokens can be signed
+                        and optionally encrypted, ensuring that only authorized
+                        parties can access protected resources. Tokens also
+                        support expiration times and can be invalidated if
+                        necessary, adding an extra layer of security.
+                    </li>
+                    <li>
+                        <strong>Role-Based Access Control</strong>: Tokens can
+                        carry encoded user information, including roles and
+                        permissions. This allows the server to enforce
+                        role-based access control (RBAC), granting or
+                        restricting access to resources based on the user&#39;s
+                        role.
+                    </li>
+                    <li>
+                        <strong>Improved User Experience</strong>: Automatic
+                        routing using tokens enhances the user experience by
+                        allowing users to remain authenticated as they navigate
+                        the application. This creates a smoother and more
+                        intuitive interaction flow.
+                    </li>
+                </ol>
+
+                <h4><strong>Summary</strong></h4>
+                <p>
+                    Incorporating password security and token-based
+                    authentication into our application serves multiple goals,
+                    from protecting user credentials and maintaining trust to
+                    enabling seamless and secure access to resources. By
+                    prioritizing these aspects, we ensure a robust and
+                    user-friendly authentication system that meets modern
+                    security standards.
+                </p>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/EUateUKmIGw"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://youtu.be/EUateUKmIGw"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-css.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section FRONTEND_AUTH, Lesson 004) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-004"
+            data-lesson-title="Saving the User &amp; Token"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-004"
+            data-lesson-title="Saving the User &amp; Token"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

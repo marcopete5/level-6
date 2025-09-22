@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Adding User Issues — Assignment</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-css.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <style>
+            /* small a11y touch */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Adding User Issues</h1>
+                <h2>Assignment</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">A student will be able to:</h3>
+                <ul>
+                    <li>create a post request to get a user’s issues.</li>
+                    <li>implement a form to add new issues.</li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/XlBnry7Jklc"
+                    title="Adding User Issues"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/XlBnry7Jklc"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="explanation-heading">
+                <h3 id="explanation-heading">
+                    Explanation of Code Block: Adding an Issue with
+                    Authentication
+                </h3>
+                <p>
+                    The provided code block demonstrates a frontend function
+                    <code>addIssue</code> that facilitates the process of adding
+                    a new issue to the application while ensuring authentication
+                    and integrating with the backend. Let&#39;s break down its
+                    functionality and how it handles authentication using
+                    <code>userAxios</code>.
+                </p>
+
+                <h4>Function Overview</h4>
+                <p>
+                    The <code>addIssue</code> function is an asynchronous
+                    function responsible for adding a new issue to the
+                    application. Here’s a detailed breakdown:
+                </p>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+async function addIssue(newIssue) {
+    try {
+        // Send a POST request to the backend API endpoint &#39;/api/main/issues&#39; with the new issue data
+        const res = await userAxios.post(&#39;/api/main/issues&#39;, newIssue);
+
+        // Update the user state with the newly added issue
+        setUserState(prevState =&gt; {
+            return {
+                ...prevState,
+                issues: [...prevState.issues, res.data] // Append the new issue to the existing issues array
+            }
+        });
+    } catch (error) {
+        console.log(error); // Log any errors that occur during the request
+    }
+}
+      </code></pre>
+
+                <h4>Explanation</h4>
+                <ol>
+                    <li>
+                        <strong>Sending the POST Request</strong>:
+                        <ul>
+                            <li>
+                                The function initiates a POST request to the
+                                backend API endpoint
+                                <code>/api/main/issues</code> using
+                                <code>userAxios.post</code>. This endpoint is
+                                responsible for saving the new issue to the
+                                database.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Authentication Token</strong>:
+                        <ul>
+                            <li>
+                                <code>userAxios</code> is configured to carry
+                                the authentication token
+                                (<code>req.auth._id</code>) automatically with
+                                every request. This token identifies the
+                                currently logged-in user
+                                (<code>req.auth._id</code>) and is crucial for
+                                ensuring that the backend can associate the new
+                                issue with the correct user.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Updating User State</strong>:
+                        <ul>
+                            <li>
+                                Upon successfully adding the issue (<code
+                                    >res.data</code
+                                >
+                                contains the newly saved issue object from the
+                                server response),
+                                <code>setUserState</code> function is used to
+                                update the frontend state. It spreads the
+                                previous state (<code>prevState</code>) and
+                                appends the new issue to the
+                                <code>issues</code> array.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Error Handling</strong>:
+                        <ul>
+                            <li>
+                                The function includes a
+                                <code>try-catch</code> block to handle any
+                                potential errors that may occur during the POST
+                                request. If an error occurs, it is logged to the
+                                console for debugging purposes
+                                (<code>console.log(error)</code>).
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4>Backend Integration</h4>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+issueRouter.post(&#39;/&#39;, async (req, res, next) =&gt; {
+    try {
+        req.body.userId = req.auth._id; // Assign the user ID from the authentication token to the new issue
+        const newIssue = new Issue(req.body); // Create a new Issue instance with the request body
+        const savedIssue = await newIssue.save(); // Save the new issue to the database
+        return res.status(201).send(savedIssue); // Respond with the saved issue object
+    } catch (error) {
+        res.status(500); // Handle internal server error
+        return next(error); // Pass the error to the error-handling middleware
+    }
+});
+      </code></pre>
+
+                <h4>Key Points</h4>
+                <ul>
+                    <li>
+                        <strong>Authentication</strong>: By assigning
+                        <code>req.auth._id</code> to
+                        <code>req.body.userId</code>, the backend ensures that
+                        each new issue is associated with the authenticated user
+                        who initiated the request.
+                    </li>
+                    <li>
+                        <strong>Token Handling</strong>:
+                        <code>userAxios</code> automatically includes the
+                        authentication token (<code>req.auth._id</code>) with
+                        each request, enabling the backend to track and
+                        authenticate the user creating the issue.
+                    </li>
+                    <li>
+                        <strong>State Management</strong>: After successfully
+                        adding the issue on the backend and receiving a
+                        response, the frontend updates its state (<code
+                            >issues</code
+                        >
+                        array) to reflect the new issue, ensuring data
+                        consistency and real-time updates for users.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div role="region" aria-label="Mongoose 6.12 content">
+                        <p>
+                            You are going to create a full stack application
+                            with user authentication created with Node, React,
+                            Express, Mongoose &amp; Mongodb that allows users to
+                            post and upvote or downvote political issues.
+                        </p>
+                        <p>
+                            This assignment has the most difficult requirements
+                            of any at V School. Ask around and find or make a
+                            friend who is working on it.
+                        </p>
+
+                        <h3><strong>Requirements:</strong></h3>
+                        <ul>
+                            <li>
+                                A login/signup page that is required to visit
+                                any part of the application.
+                            </li>
+                            <li>
+                                Web page that shows a list of political issues.
+                                <ul>
+                                    <li>Each item will have a title</li>
+                                    <li>Each item will have a description</li>
+                                    <li>
+                                        Each item can be upvoted or downvoted.
+                                        <ul>
+                                            <li>
+                                                User&#39;s should only be able
+                                                to upvote/downvote once per
+                                                issue.
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        Items will be ordered by upvotes (the
+                                        most being at the top).
+                                    </li>
+                                    <li>
+                                        Each item should show the total number
+                                        of votes
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                Include a page that will allow logged in users
+                                to add new posts.
+                            </li>
+                            <li>
+                                Include a page that will allow logged in users
+                                to view all posts they personally made.
+                            </li>
+                            <li>
+                                Users can comment on posts (unlimited number of
+                                comments per post)
+                            </li>
+                            <li>
+                                You will create a back end with the needed
+                                &#39;models&#39; and &#39;routes&#39; so that
+                                all topics, comments, and votes are persistent.
+                            </li>
+                            <li>Use React for the front-end</li>
+                            <li>Use Node/Express for the back-end</li>
+                            <li>
+                                Use MongoDB and Mongoose for your database and
+                                models
+                            </li>
+                            <li>
+                                Use dotenv, jsonwebtoken &amp; expressJwt to
+                                manage user authentication.
+                            </li>
+                        </ul>
+
+                        <p>
+                            Clearly you will need the ability to
+                            <code>GET</code>, <code>POST</code>,
+                            <code>PUT</code>, and <code>DELETE</code>.
+                        </p>
+                        <p>
+                            You will want to approach this project in 3 parts
+                            while following the Level 6 vidoes and associated
+                            git repository. After implementing the user
+                            authentication code with the videos using the git
+                            repository provided, replicate that code again for
+                            this project.
+                        </p>
+                        <p>
+                            After Part 3 of the video series you should have
+                            user authentication and basic routing set up so that
+                            you can continue to develop the rest of this
+                            application.
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry (Level 6, Section FRONTEND_AUTH, Assignment 007) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-007"
+            data-lesson-title="Adding User Issues"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-007"
+            data-lesson-title="Adding User Issues"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

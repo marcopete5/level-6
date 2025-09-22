@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Front End Setup — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Front End Setup</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="lesson-video">
+                <h3 id="lesson-video">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/xFEyImAjh2U"
+                    title="Front End Setup"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://www.youtube.com/watch?v=xFEyImAjh2U"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="overview-heading">
+                <h3 id="overview-heading"><strong>Overview</strong></h3>
+                <p>
+                    In this part of the course, we are setting up the frontend
+                    of our application. We&#39;ll be using a Vite app with React
+                    Router DOM to create a basic authentication form and a few
+                    routes. Here&#39;s how you can get started and what
+                    we&#39;ve accomplished so far.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="steps-heading">
+                <h3 id="steps-heading"><strong>Steps to Set Up</strong></h3>
+
+                <h4>1. Clone the Repository:</h4>
+                <p>
+                    First, you need to clone the frontend repository into the
+                    root folder of your project (the same place where you run
+                    <code>nodemon server.js</code>). Use the following command
+                    to clone the repository:
+                </p>
+
+                <pre><code class="language-bash" role="region" aria-label="Code block">
+
+git clone https://github.com/VSchool/rock-the-vote-client.git
+
+</code></pre>
+
+                <h4>2. Rename the Folder:</h4>
+                <p>
+                    The cloned repository will create a new folder called
+                    <code>rock-the-vote-client</code>. You can rename this
+                    folder to simply <code>client</code>.
+                </p>
+                <p><strong>Option 1</strong>: Rename using the command line:</p>
+
+                <pre><code class="language-bash" role="region" aria-label="Code block">
+
+mv rock-the-vote-client client
+
+</code></pre>
+
+                <p>
+                    <strong>Option 2</strong>: Rename manually within VS Code:
+                </p>
+                <ul>
+                    <li>Open VS Code.</li>
+                    <li>
+                        Locate the <code>rock-the-vote-client</code> folder in
+                        the file explorer.
+                    </li>
+                    <li>
+                        Right-click on the folder and select &quot;Rename&quot;.
+                    </li>
+                    <li>Change the name to <code>client</code>.</li>
+                </ul>
+
+                <h4>3. Vite App and React Router DOM:</h4>
+                <p>
+                    We have set up a Vite app to ensure a fast and optimized
+                    development environment.
+                </p>
+                <p>
+                    React Router DOM is used to handle routing within our React
+                    application, providing navigation between different
+                    components and pages.
+                </p>
+
+                <h4>4. Basic Authentication Form and Routes:</h4>
+                <p>
+                    The frontend includes a simple authentication form that
+                    allows users to sign up and log in.
+                </p>
+                <p>
+                    We&#39;ve also created routes for the profile and public
+                    pages, ensuring a basic structure for navigating between
+                    different parts of the app.
+                </p>
+
+                <h4>5. Styling:</h4>
+                <p>
+                    The application currently has minimal styling to keep things
+                    simple and focused on functionality.
+                </p>
+                <p>
+                    Feel free to customize the styles as needed to fit your
+                    preferences or requirements.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="key-takeaways-heading">
+                <h3 id="key-takeaways-heading">
+                    <strong>Key Takeaways</strong>
+                </h3>
+                <ul>
+                    <li>
+                        <strong>Repository Setup</strong>: By cloning and
+                        renaming the repository, you integrate the frontend with
+                        your existing backend setup seamlessly.
+                    </li>
+                    <li>
+                        <strong>Vite and React Router DOM</strong>: These tools
+                        help create a fast, efficient, and navigable React
+                        application.
+                    </li>
+                    <li>
+                        <strong>Basic Functionality</strong>: The provided
+                        authentication form and routes give you a starting point
+                        for further development and customization.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="next-steps-heading">
+                <h3 id="next-steps-heading"><strong>Next Steps</strong></h3>
+                <p>
+                    After setting up the frontend, you can start the development
+                    server by navigating to the <code>client</code> folder and
+                    running:
+                </p>
+
+                <pre><code class="language-bash" role="region" aria-label="Code block">
+
+rm -rf .git
+npm install
+npm run dev
+
+</code></pre>
+            </div>
+
+            <!-- Everything AFTER the "Mongoose 6.12 Lesson" heading is wrapped in this toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-lesson">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/7Q5s-eyZunI?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=7Q5s-eyZunI&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=12"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <h3 id="article-heading">Article</h3>
+                    <p>
+                        <a
+                            href="https://github.com/v-school/rlm-token-auth-series-context/tree/part-2-start"
+                            target="_blank"
+                            rel="noopener">
+                            GitHub - v-school/rlm-token-auth-series-context at
+                            part-2-start
+                        </a>
+                    </p>
+
+                    <h3 id="git-repo-heading">Git Repo</h3>
+
+                    <h4><strong>Part 2 start:</strong></h4>
+
+                    <pre><code class="language-bash" role="region" aria-label="Code block">
+git clone -b part-2-start https://github.com/v-school/rlm-token-auth-series-context.git
+cd rlm-token-auth-series-context
+code .
+npm install
+rm -rf .git
+</code></pre>
+
+                    <h4><strong>Part 2 end:</strong></h4>
+
+                    <pre><code class="language-bash" role="region" aria-label="Code block">
+git clone https://github.com/VSchool/vite-token-auth-series-context-2-3
+cd vite-token-auth-series-context-2-3
+code .
+npm install
+rm -rf .git
+</code></pre>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section FRONTEND_AUTH, Lesson 001) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-001"
+            data-lesson-title="Front End Setup"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-FRONTEND_AUTH-001"
+            data-lesson-title="Front End Setup"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>
