@@ -1,32 +1,30 @@
 const express = require('express');
 const app = express();
-const mongoose = require('mongoose');
-const morgan = require('morgan');
 require('dotenv').config();
+const morgan = require('morgan');
+const mongoose = require('mongoose');
 const { expressjwt } = require('express-jwt');
 
+// Middleware
 app.use(express.json());
 app.use(morgan('dev'));
 
-async function connectToDb() {
-    try {
-        await mongoose.connect(
-            `mongodb+srv://marcopete:Mdabomb55@vschool.i9rhvwb.mongodb.net/`
-        );
-        console.log('connected to Db');
-    } catch (error) {
-        console.log(error);
-    }
-}
-connectToDb();
+// DB Connect
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error(err));
 
-app.use('/api/auth', require('./routes/authRouter'));
+// Routes
+app.use('/auth', require('./routes/authRouter'));
+// Protect API routes
 app.use(
-    '/api/main',
-    expressjwt({ secret: `process.env.SECRET`, algorithms: ['HS256'] })
-); //any request that starts with this endpoint is going to require a token to be present
-app.use('/api/main/issues', require('./routes/issueRouter'));
+    '/api',
+    expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
+);
+app.use('/api/issues', require('./routes/issueRouter'));
 
+// Error handler
 app.use((err, req, res, next) => {
     console.log(err);
     if (err.name === 'UnauthorizedError') {
@@ -35,6 +33,7 @@ app.use((err, req, res, next) => {
     return res.send({ errMsg: err.message });
 });
 
-app.listen(8888, () => {
-    console.log(`server is running on ${8888}`);
+// Server Listen
+app.listen(9000, () => {
+    console.log(`Server is running on port 9000`);
 });
