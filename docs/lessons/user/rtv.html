@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rock the Vote: Server Setup — Assignment</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Rock the Vote: Server Setup</h1>
+                <h2>Assignment</h2>
+            </header>
+
+            <div class="section">
+                <p>
+                    <strong
+                        >You are tasked with building a full stack application
+                        that facilitates user authentication and allows users to
+                        post and vote on political issues. This assignment is
+                        one of the most challenging at V School. We recommend
+                        collaborating with fellow students or friends working on
+                        the project.</strong
+                    >
+                </p>
+                <p>
+                    <strong
+                        >In this first assignment, you will set up the backend
+                        for your application. The goal is to create a robust
+                        server that includes essential models, routes, and error
+                        handling. Follow the instructions below to complete this
+                        assignment.</strong
+                    >
+                </p>
+                <hr />
+            </div>
+
+            <div class="section" aria-labelledby="requirements-heading">
+                <h3 id="requirements-heading">Requirements</h3>
+
+                <h4>1. Models</h4>
+                <ul>
+                    <li>
+                        <strong>User</strong>: Create a model for user data.
+                    </li>
+                    <li>
+                        <strong>Issues</strong>: Create a model for issues data.
+                    </li>
+                </ul>
+
+                <h4>2. Routes</h4>
+                <ul>
+                    <li>
+                        <strong>User Routes</strong>:
+                        <ul>
+                            <li>
+                                <strong>Login</strong>: Allow users to log in.
+                            </li>
+                            <li>
+                                <strong>Signup</strong>: Allow new users to sign
+                                up.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong
+                            >Issues Routes (Protected with
+                            <code>express-jwt</code>)</strong
+                        >:
+                        <ul>
+                            <li>
+                                <strong>Get by User Logged In</strong>: Allow
+                                users to fetch issues they have created.
+                            </li>
+                            <li>
+                                <strong>Add New Issue</strong>: Allow users to
+                                add new issues.
+                            </li>
+                            <li>
+                                <strong>Get All Issues</strong>: Fetch all
+                                issues
+                            </li>
+                            <li>
+                                <strong>Update Issue</strong>: Update an
+                                existing issue
+                            </li>
+                            <li>
+                                <strong>Delete Issue</strong>: Delete an
+                                existing issue
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>3. Error Handling</h4>
+                <p>
+                    Update the error handler to properly handle authentication
+                    errors.
+                </p>
+                <hr />
+            </div>
+
+            <div class="section" aria-labelledby="suggestions-heading">
+                <h3 id="suggestions-heading">Suggestions</h3>
+                <ol>
+                    <li>
+                        <strong>One-to-Many Relationship</strong>:
+                        <ul>
+                            <li>
+                                Establish a relationship where one entity (e.g.,
+                                user) can be associated with multiple instances
+                                of another entity (e.g., issues). This allows
+                                for scenarios where a user can create multiple
+                                issues, but each issue is linked to only one
+                                user.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section" aria-labelledby="postman-heading">
+                <h3 id="postman-heading">Testing with Postman</h3>
+                <ul>
+                    <li>
+                        Use Postman to test your API endpoints. Make sure to:
+                        <ul>
+                            <li>
+                                Test user signup and login endpoints to ensure
+                                tokens are issued correctly.
+                            </li>
+                            <li>
+                                Test protected routes by including the JWT in
+                                the Authorization header.
+                            </li>
+                            <li>
+                                Verify that you can create, read, update, and
+                                delete issues.
+                            </li>
+                            <li>
+                                Test the error handling by trying to access
+                                protected routes without a valid token and
+                                observing the error response.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <hr />
+            </div>
+
+            <div class="section" aria-labelledby="summary-heading">
+                <h3 id="summary-heading">Summary</h3>
+                <p>
+                    By following these guidelines, you will build a backend that
+                    includes user authentication, protected routes, and
+                    comprehensive error handling. Test each route to ensure
+                    everything is functioning correctly. Good luck with your
+                    &quot;Rock the Vote&quot; project!
+                </p>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 010) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-010"
+            data-lesson-title="Rock the Vote: Server Setup"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-010"
+            data-lesson-title="Rock the Vote: Server Setup"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

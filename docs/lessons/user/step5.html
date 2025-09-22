@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Express JWT & Unauthorized Errors — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Express JWT &amp; Unauthorized Errors</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    A student will be able to create post, put and delete
+                    requests for a user’s todo.
+                </li>
+                <li>
+                    A student will be able to test all the routes using postman.
+                </li>
+            </ul>
+
+            <div class="section" aria-labelledby="watch-note">
+                <h3 id="watch-note">Lesson</h3>
+                <p>
+                    <strong
+                        >💡 Watch both of the lessons below before moving
+                        on!</strong
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="express-jwt-lesson">
+                <h3 id="express-jwt-lesson">Express-jwt lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/6kDIrTzMtnI"
+                    title="Express-jwt lesson"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/6kDIrTzMtnI"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="unauthorized-errors">
+                <h3 id="unauthorized-errors">Unauthorized Errors</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/s_J9QLjg9wY"
+                    title="Unauthorized Errors"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/s_J9QLjg9wY"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="understanding-express-jwt">
+                <h3 id="understanding-express-jwt">
+                    <strong
+                        >Understanding <code>express-jwt</code> and Error
+                        Handling in Express.js</strong
+                    >
+                </h3>
+                <p>
+                    In this lesson, we&#39;ll explore how to secure your
+                    Express.js application using JWTs (JSON Web Tokens) and the
+                    <code>express-jwt</code> middleware. We&#39;ll also see how
+                    to handle errors that arise from invalid or missing tokens.
+                </p>
+                <hr />
+
+                <h4>
+                    <strong
+                        >Protecting Routes with <code>express-jwt</code></strong
+                    >
+                </h4>
+                <p>
+                    To protect routes in your application, you can use the
+                    <code>express-jwt</code> middleware. Here&#39;s the key line
+                    of code:
+                </p>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.use(&#39;/api/main&#39;, expressjwt({ secret: process.env.SECRET, algorithms: [&#39;HS256&#39;] }));
+</code></pre>
+
+                <h4><strong>What Does This Do?</strong></h4>
+                <ol>
+                    <li>
+                        <strong>Route Protection</strong>:
+                        <ul>
+                            <li>
+                                The middleware <code>expressjwt</code> is
+                                applied to the <code>/api/main</code> route.
+                                This means that any request to a route starting
+                                with <code>/api/main</code> will require a valid
+                                JWT.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>JWT Verification</strong>:
+                        <ul>
+                            <li>
+                                The <code>expressjwt</code> middleware checks
+                                the incoming request for a JWT in the
+                                Authorization header.
+                            </li>
+                            <li>
+                                It verifies the token using the secret key
+                                provided (<code>process.env.SECRET</code>). This
+                                secret key must match the one used to sign the
+                                token.
+                            </li>
+                            <li>
+                                The <code>algorithms</code> option specifies
+                                that the token must be signed using the
+                                <code>HS256</code> algorithm, ensuring a secure
+                                and consistent method of token signing and
+                                verification.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Securing Your API</strong>:
+                        <ul>
+                            <li>
+                                By adding this middleware, you ensure that only
+                                clients with a valid token can access the
+                                protected routes. This is crucial for securing
+                                sensitive endpoints, like those involving user
+                                data or actions requiring authentication.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <hr />
+
+                <h4>
+                    <strong>Adding the Payload to <code>req.auth</code></strong>
+                </h4>
+                <p>
+                    One of the powerful features of <code>express-jwt</code> is
+                    that it automatically adds the decoded JWT payload to the
+                    <code>req</code> object as <code>req.auth</code>. This
+                    allows you to access user information within your route
+                    handlers easily.
+                </p>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.get(&#39;/api/main/protected&#39;, (req, res) =&gt; {
+    console.log(req.auth); // Logs the JWT payload
+    res.send(`Hello ${req.auth.username}, this is a protected route`);
+});
+</code></pre>
+
+                <h4><strong>What Does This Do?</strong></h4>
+                <ol>
+                    <li>
+                        <strong>Accessing User Information</strong>:
+                        <ul>
+                            <li>
+                                The JWT payload, which might contain user
+                                information like <code>id</code> and
+                                <code>username</code>, is available in
+                                <code>req.auth</code>.
+                            </li>
+                            <li>
+                                This makes it easy to personalize responses or
+                                enforce user-specific logic within your
+                                protected routes.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Simplified Route Handlers</strong>:
+                        <ul>
+                            <li>
+                                Instead of manually decoding the JWT in each
+                                route handler, you can rely on
+                                <code>express-jwt</code> to do it for you. This
+                                keeps your code clean and consistent.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <hr />
+
+                <h4><strong>Handling Errors with Middleware</strong></h4>
+                <p>
+                    When the <code>expressjwt</code> middleware detects an
+                    invalid or missing token, it throws an error. We need to
+                    handle this error gracefully to inform the client about what
+                    went wrong. Here’s how you can do it:
+                </p>
+
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.use((err, req, res, next) =&gt; {
+    console.log(err); // Log the error for debugging
+    if (err.name === &quot;UnauthorizedError&quot;) {
+        res.status(err.status); // Set the response status to 401 Unauthorized
+    }
+    return res.send({ errMsg: err.message }); // Send a JSON response with the error message
+});
+</code></pre>
+
+                <h4><strong>What Does This Do?</strong></h4>
+                <ol>
+                    <li>
+                        <strong>Error Logging</strong>:
+                        <ul>
+                            <li>
+                                The error-handling middleware logs the error to
+                                the console, which helps in debugging issues by
+                                providing details about what went wrong.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Specific Error Handling</strong>:
+                        <ul>
+                            <li>
+                                The <code>if</code> statement checks if the
+                                error&#39;s name is
+                                &quot;UnauthorizedError&quot;, which is the
+                                error thrown by <code>expressjwt</code> when the
+                                JWT is invalid or missing.
+                            </li>
+                            <li>
+                                If this is the case, it sets the response status
+                                to the error&#39;s status code (typically 401
+                                Unauthorized), indicating that the client must
+                                provide valid authentication credentials.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Sending a Response</strong>:
+                        <ul>
+                            <li>
+                                Regardless of the error type, the middleware
+                                sends a JSON response with an error message
+                                (<code>err.message</code>). This informs the
+                                client about the nature of the error.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <hr />
+
+                <h4><strong>Summary</strong></h4>
+                <p>
+                    Using <code>express-jwt</code> to protect routes ensures
+                    that only authenticated users can access certain parts of
+                    your application. The middleware automatically decodes the
+                    JWT and adds the payload to <code>req.auth</code>,
+                    simplifying access to user information within your route
+                    handlers. The error-handling middleware allows you to manage
+                    authentication errors effectively, providing clear feedback
+                    to the client while helping you debug issues on the server
+                    side. This setup is essential for building secure and robust
+                    applications.
+                </p>
+            </div>
+
+            <!-- Everything AFTER the "Mongoose 6.12 Lesson" heading is wrapped in this toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <h3 id="important-note">
+                        <strong
+                            >Important Note: Use
+                            <code>req.auth._id</code></strong
+                        >
+                    </h3>
+                    <h4>
+                        The lesson uses req.user._id to access the ID, which
+                        will cause an error.<br />Instead, use req.auth._id
+                    </h4>
+
+                    <div aria-labelledby="mongoose-lesson">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/KlPyI3aG0uM"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=KlPyI3aG0uM"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 009) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-009"
+            data-lesson-title="Express JWT & Unauthorized Errors"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-009"
+            data-lesson-title="Express JWT & Unauthorized Errors"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

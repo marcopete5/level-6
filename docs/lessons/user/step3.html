@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Relating the Issue Model to a User — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Relating the Issue Model to a User</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    Students will be able to define and implement a Mongoose
+                    schema for an Issue model, establishing the structure and
+                    validation rules for issue data, and creating a relational
+                    link between issues and users.
+                </li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/dG6aW7AgtiE"
+                    title="Relating the Issue Model to a User"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/dG6aW7AgtiE"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="understanding-issue-schema">
+                <h3 id="understanding-issue-schema">
+                    <strong>Understanding the Issue Schema</strong>
+                </h3>
+                <p>
+                    In this section, we define the
+                    <code>issueSchema</code> using Mongoose, which outlines the
+                    structure of the Issue model in our application. This schema
+                    is crucial for ensuring consistent and valid data storage
+                    for issues created by users.
+                </p>
+
+                <h4><strong>Functionality</strong></h4>
+
+                <h4><strong>Schema Definition</strong></h4>
+                <ul>
+                    <li>
+                        <strong>Fields</strong>:
+                        <ul>
+                            <li>
+                                <code>title</code>: A required string that
+                                represents the title of the issue.
+                            </li>
+                            <li>
+                                <code>description</code>: A required string that
+                                provides a detailed description of the issue.
+                            </li>
+                            <li>
+                                <code>imgUrl</code>: An optional string that can
+                                store a URL to an image associated with the
+                                issue.
+                            </li>
+                            <li>
+                                <code>userId</code>: An ObjectId that references
+                                the User model, linking the issue to a specific
+                                user.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4><strong>Mongoose Integration</strong></h4>
+                <ul>
+                    <li>
+                        The schema is defined using Mongoose&#39;s
+                        <code>Schema</code> class, which allows for the creation
+                        of a structured schema for MongoDB documents.
+                    </li>
+                    <li>
+                        The schema is then used to create a Mongoose model named
+                        &quot;Issue&quot;, which is exported for use in other
+                        parts of the application.
+                    </li>
+                </ul>
+
+                <h4><strong>Key Takeaways</strong></h4>
+                <ol>
+                    <li>
+                        <strong>Data Structure</strong>: The
+                        <code>issueSchema</code> defines the structure and data
+                        types for issues, ensuring that each issue has a title
+                        and description, and can optionally include an image
+                        URL.
+                    </li>
+                    <li>
+                        <strong>User Association</strong>: By including a
+                        <code>userId</code> field that references the User
+                        model, the schema establishes a relational link between
+                        issues and users, allowing for user-specific issue
+                        management.
+                    </li>
+                    <li>
+                        <strong>Validation</strong>: The schema enforces
+                        validation rules, such as requiring the title and
+                        description fields, to maintain data integrity and
+                        consistency.
+                    </li>
+                    <li>
+                        <strong>Mongoose Models</strong>: The schema is used to
+                        create a Mongoose model, which provides a powerful
+                        interface for interacting with MongoDB and performing
+                        CRUD operations on issue data.
+                    </li>
+                </ol>
+
+                <p>
+                    This schema forms the backbone of our issue management
+                    system, enabling the creation, storage, and retrieval of
+                    issue data in a structured and consistent manner.
+                </p>
+            </div>
+
+            <!-- Everything AFTER the Mongoose 6.12 Lesson heading is inside this toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/glK0aD-N44Q?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=7"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=glK0aD-N44Q&amp;list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=7"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <hr />
+
+                    <h3>
+                        <strong
+                            >Important Note: Algorithm Parameter
+                            Requirement</strong
+                        >
+                    </h3>
+
+                    <h4>
+                        <strong
+                            >Error(&#39;algorithms should be set&#39;):</strong
+                        >
+                    </h4>
+                    <ul>
+                        <li>
+                            <strong>Issue</strong>: As of the latest updates to
+                            express-jwt, it&#39;s now mandatory to include an
+                            &#39;algorithms&#39; parameter, in addition to the
+                            &#39;secret&#39; key, for proper configuration.
+                        </li>
+                        <li>
+                            <strong>Documentation Reference</strong>: The
+                            <a
+                                href="https://github.com/auth0/express-jwt#required-parameters"
+                                target="_blank"
+                                rel="noopener"
+                                >express-jwt documentation</a
+                            >
+                            outlines the necessity of specifying the algorithm
+                            parameter for secure JWT token verification.
+                        </li>
+                    </ul>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.use(&#39;/api&#39;, expressJwt({ secret: process.env.SECRET, algorithms: [&#39;HS256&#39;] }));
+</code></pre>
+
+                    <p>
+                        This ensures secure JWT token verification using the
+                        HMAC-SHA256 (HS256) algorithm.
+                    </p>
+
+                    <h4>
+                        <strong>Note on Requiring expressjwt</strong> (Updated
+                        on 8/3/22):
+                    </h4>
+                    <ul>
+                        <li>
+                            <strong>Syntax Update</strong>: To require
+                            <code>expressjwt</code> following the latest
+                            express-jwt documentation as of August 3, 2022,
+                            it&#39;s recommended to use the following syntax:
+                        </li>
+                    </ul>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+var { expressjwt: jwt } = require(&quot;express-jwt&quot;);
+</code></pre>
+
+                    <p>
+                        <a
+                            href="https://github.com/auth0/express-jwt#required-parameters"
+                            target="_blank"
+                            rel="noopener"
+                            >update applies to express-jwt v6.0.0 or higher</a
+                        >
+                    </p>
+                    <p>
+                        <a
+                            href="https://github.com/auth0/express-jwt#required-parameters"
+                            target="_blank"
+                            rel="noopener"
+                            >link to d</a
+                        >ocs
+                    </p>
+
+                    <hr />
+
+                    <h3>
+                        <strong
+                            >Code Explanation: JWT Authentication and Error
+                            Handling</strong
+                        >
+                    </h3>
+                    <p>
+                        This code snippet focuses on implementing JWT (JSON Web
+                        Token) authentication for certain routes and error
+                        handling in a Node.js application, possibly using the
+                        Express.js framework. It consists of two main
+                        components: JWT authentication middleware and error
+                        handling middleware.
+                    </p>
+
+                    <h4>JWT Authentication Middleware</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.use(&#39;/main&#39;, expressjwt({ secret: process.env.SECRET, algorithms: [&#39;HS256&#39;] }))
+</code></pre>
+
+                    <ul>
+                        <li>
+                            <strong>Purpose</strong>: This middleware is
+                            responsible for validating incoming JWT tokens.
+                        </li>
+                        <li>
+                            <strong>Route Restriction</strong>: It is applied to
+                            routes that start with &#39;/main&#39;.
+                        </li>
+                        <li>
+                            <strong>JWT Verification</strong>: It uses the
+                            <code>expressjwt</code> middleware for JWT
+                            verification.
+                        </li>
+                        <li>
+                            <strong>Secret Key</strong>: The verification
+                            process relies on a secret key, which is retrieved
+                            from the environment variable
+                            <code>process.env.SECRET</code>.
+                        </li>
+                        <li>
+                            <strong>Allowed Algorithm</strong>: The
+                            <code>algorithms</code> option specifies the allowed
+                            algorithms for JWT verification, with
+                            &#39;HS256&#39; indicating the HMAC-SHA256
+                            algorithm.
+                        </li>
+                    </ul>
+
+                    <h4>Error Handling Middleware</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.use((err, req, res, next) =&gt; {
+   console.log(err);
+   if (err.name === &quot;UnauthorizedError&quot;) {
+       res.status(err.status);
+   }
+   return res.send({ errMsg: err.message });
+})
+</code></pre>
+
+                    <ul>
+                        <li>
+                            <strong>Purpose</strong>: This middleware deals with
+                            errors that may occur during JWT verification or
+                            authentication.
+                        </li>
+                        <li>
+                            <strong>Parameters</strong>: It accepts four
+                            parameters: <code>err</code> (the error object),
+                            <code>req</code> (the request object),
+                            <code>res</code> (the response object), and
+                            <code>next</code> (the next middleware function).
+                        </li>
+                        <li>
+                            <strong>Error Logging</strong>: If an error occurs,
+                            it logs the error to the console for debugging
+                            purposes.
+                        </li>
+                    </ul>
+
+                    <h4>Handling &quot;UnauthorizedError&quot;</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+if (err.name === &quot;UnauthorizedError&quot;) {
+   res.status(err.status);
+}
+</code></pre>
+
+                    <ul>
+                        <li>
+                            <strong>Purpose</strong>: This section checks
+                            whether the error&#39;s <code>name</code> property
+                            matches &quot;UnauthorizedError,&quot; which is a
+                            common indicator of errors related to failed
+                            authentication or JWT verification.
+                        </li>
+                        <li>
+                            <strong>HTTP Status Code</strong>: If it is indeed
+                            an &quot;UnauthorizedError,&quot; the HTTP response
+                            status is set to the status code of the error.
+                            Typically, this would be an HTTP 401 status code,
+                            indicating unauthorized access.
+                        </li>
+                    </ul>
+
+                    <h4>Sending Error Response to the Client</h4>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+return res.send({ errMsg: err.message });
+</code></pre>
+
+                    <ul>
+                        <li>
+                            <strong>Purpose</strong>: Regardless of the error
+                            type, this code sends a response to the client
+                            containing an error message in the format
+                            <code>{ errMsg: err.message }</code>. The
+                            <code>err.message</code> provides details about the
+                            specific error that occurred.
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 007) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-007"
+            data-lesson-title="Relating the Issue Model to a User"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-007"
+            data-lesson-title="Relating the Issue Model to a User"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

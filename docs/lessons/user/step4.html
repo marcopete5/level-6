@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Creating User Issue Routes — Lesson</title>
+
+        <!-- Shared stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism theme (syntax colors) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+
+        <style>
+            /* Accessibility touches */
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+            .btn-primary {
+                text-decoration: none;
+                display: inline-block;
+            }
+            details summary {
+                cursor: pointer;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Creating User Issue Routes</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <h3 id="learning-objectives">Learning Objectives</h3>
+            <ul aria-labelledby="learning-objectives">
+                <li>
+                    Students will be able to implement and understand the
+                    functionality of Express router endpoints for creating and
+                    retrieving issues, effectively associating issues with
+                    specific users
+                </li>
+            </ul>
+
+            <h3 id="video">Lesson</h3>
+            <div class="section" aria-labelledby="video">
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/ApUT1I6Mmq0"
+                    title="Creating User Issue Routes"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/ApUT1I6Mmq0"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="understanding-issue-router">
+                <h3 id="understanding-issue-router">
+                    <strong>Understanding the Issue Router</strong>
+                </h3>
+                <p>
+                    In this section, we introduce the
+                    <code>issueRouter</code> to handle the creation and
+                    retrieval of issues in our application. This router is
+                    essential for managing issue-related data and associating it
+                    with specific users.
+                </p>
+
+                <h4><strong>Functionality</strong></h4>
+
+                <h4><strong>POST Request: Creating a New Issue</strong></h4>
+                <ul>
+                    <li><strong>Endpoint</strong>: <code>/</code></li>
+                    <li>
+                        <strong>Process</strong>:
+                        <ul>
+                            <li>
+                                When a POST request is made to the
+                                <code>/</code> endpoint, the server first
+                                assigns the <code>userId</code> from the
+                                authenticated user (available in
+                                <code>req.auth._id</code>) to the request body.
+                            </li>
+                            <li>
+                                A new issue is then created using the data from
+                                the request body, which includes the
+                                <code>userId</code>.
+                            </li>
+                            <li>
+                                The newly created issue is saved to the
+                                database.
+                            </li>
+                            <li>
+                                Upon successful saving, the server responds with
+                                a status code of 201 (Created) and the saved
+                                issue data.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Error Handling</strong>:
+                        <ul>
+                            <li>
+                                If an error occurs during this process, a status
+                                code of 500 (Internal Server Error) is returned,
+                                and the error is passed to the next middleware
+                                for further handling.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>
+                    <strong>GET Request: Retrieving Issues by User ID</strong>
+                </h4>
+                <ul>
+                    <li><strong>Endpoint</strong>: <code>/:userId</code></li>
+                    <li>
+                        <strong>Process</strong>:
+                        <ul>
+                            <li>
+                                When a GET request is made to the
+                                <code>/:userId</code> endpoint, the server
+                                retrieves all issues associated with the
+                                specified <code>userId</code> from the database.
+                            </li>
+                            <li>
+                                The retrieved issues are then sent back to the
+                                client with a status code of 200 (OK).
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Error Handling</strong>:
+                        <ul>
+                            <li>
+                                If an error occurs during this process, a status
+                                code of 500 (Internal Server Error) is returned,
+                                and the error is passed to the next middleware
+                                for further handling.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4><strong>Key Takeaways</strong></h4>
+                <ol>
+                    <li>
+                        <strong>User Association</strong>: Each issue is linked
+                        to a specific user through the
+                        <code>userId</code> field, ensuring that issues can be
+                        associated with and retrieved by the user who created
+                        them.
+                    </li>
+                    <li>
+                        <strong>Secure Data Handling</strong>: By using
+                        <code>req.auth._id</code>, the POST request ensures that
+                        the <code>userId</code> is securely assigned based on
+                        the authenticated user&#39;s ID.
+                    </li>
+                    <li>
+                        <strong>Error Management</strong>: The implementation
+                        includes robust error handling, ensuring that any issues
+                        during the request processing are appropriately handled
+                        and communicated to the client.
+                    </li>
+                    <li>
+                        <strong>RESTful Design</strong>: The router follows
+                        RESTful principles, providing clear endpoints for
+                        creating and retrieving issues, enhancing the API&#39;s
+                        usability and maintainability.
+                    </li>
+                </ol>
+
+                <p>
+                    This setup forms the foundation for managing issues within
+                    our application, enabling users to create and view their
+                    issues seamlessly while ensuring data integrity and
+                    security.
+                </p>
+            </div>
+
+            <!-- Everything AFTER the "Mongoose 6.12 Lesson" heading is wrapped in this toggle -->
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <h3 id="important-note">
+                        <strong
+                            >Important Note: Use
+                            <code>req.auth._id</code></strong
+                        >
+                    </h3>
+                    <h4>
+                        The lesson uses req.user._id to access the ID, which
+                        will cause an error.<br />Instead, use req.auth._id
+                    </h4>
+
+                    <h3 id="mongoose-lesson">Lesson</h3>
+                    <div aria-labelledby="mongoose-lesson">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/b4TQZTDsPqw?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=10"
+                            title="Mongoose 6.12 Lesson"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=b4TQZTDsPqw&amp;list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&amp;index=10"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+
+                    <hr />
+
+                    <h3>
+                        <strong
+                            >Building a RESTful API with Node.js, Express, and
+                            MongoDB</strong
+                        >
+                    </h3>
+
+                    <h4>Defining the Post Model</h4>
+                    <p>
+                        In this code snippet, a &quot;Post&quot; model is
+                        defined using Mongoose and a schema. The schema
+                        describes the structure of a &quot;Post&quot; object,
+                        which includes fields for the title, description,
+                        datePosted, and a reference to a &quot;User.&quot; This
+                        reference establishes a one-to-many relationship between
+                        users and their posts.
+                    </p>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+const mongoose = require(&#39;mongoose&#39;);
+const Schema = mongoose.Schema;
+
+const postSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    datePosted: {
+        type: Date,
+        default: Date.now
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: &quot;User&quot;,
+        required: true
+    }
+});
+
+module.exports = mongoose.model(&quot;Post&quot;, postSchema);
+</code></pre>
+
+                    <h4>Creating a New Post</h4>
+                    <p>
+                        The following code is a route handler for creating a new
+                        post. When a POST request is made to this route, it
+                        identifies the authenticated user using
+                        <code>req.auth._id</code>. This ID is made available
+                        through an authentication middleware, likely
+                        Express-JWT, which extracts user information from a JWT
+                        token included in the request&#39;s headers. The new
+                        post is created and associated with the user, and then
+                        saved to the database.
+                    </p>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+postRouter.post(&#39;/&#39;, (req, res, next) =&gt; {
+    req.body.user = req.auth._id;
+    const newPost = new post(req.body);
+
+    newPost.save((err, savedPost) =&gt; {
+        if (err) {
+            res.status(500);
+            return next(err);
+        }
+        return res.status(201).send(savedPost);
+    });
+});
+</code></pre>
+
+                    <h4>Using Express-JWT Middleware</h4>
+                    <p>
+                        To secure routes and access authenticated user
+                        information, Express middleware, such as
+                        <code>expressjwt</code>, is employed. It verifies JSON
+                        Web Tokens (JWT) for authentication, with the secret key
+                        defined in <code>process.env.SECRET</code>. The
+                        authenticated user&#39;s data, including their
+                        <code>_id</code>, is stored in the
+                        <code>req.auth</code> object and is accessible
+                        throughout the route handlers in the protected routes,
+                        including &#39;/main&#39; and its sub-routes.
+                    </p>
+
+                    <pre><code class="language-jsx" role="region" aria-label="Code block">
+app.use(&#39;/main&#39;, expressjwt({ secret: process.env.SECRET, algorithms: [&#39;HS256&#39;] }));
+app.use(&#39;/main/posts&#39;, require(&#39;./routes/postRouter.js&#39;));
+</code></pre>
+                </details>
+            </div>
+        </main>
+
+        <!-- Prism core -->
+        <link
+            rel="preload"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"
+            as="script" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+
+        <!-- Autoload languages based on language-xxxx class names -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"
+            data-autoloader-path="https://cdn.jsdelivr.net/npm/prismjs@1/components/"></script>
+
+        <!-- Seed common components now; autoloader fetches others as needed -->
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <!-- Lesson entry (Level 6, Section USERMODEL_JWT, Lesson 008) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-008"
+            data-lesson-title="Creating User Issue Routes"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback form (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-USERMODEL_JWT-008"
+            data-lesson-title="Creating User Issue Routes"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>
