@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Conditional Views — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Conditional Views</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        Conditionally render the <em>Edit</em> and
+                        <em>Delete</em> buttons.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/oCjEMIkJXU0"
+                    title="Conditional Views"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/oCjEMIkJXU0"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="importance-heading">
+                <h3 id="importance-heading">
+                    Importance of Displaying Conditional User Actions and
+                    Keeping User Data Secure
+                </h3>
+                <p>
+                    Conditional rendering of user-specific actions (like
+                    Edit/Delete) improves UX by showing only relevant options,
+                    reduces clutter, and enforces access control in the UI. Pair
+                    this with server-side authorization to protect privacy,
+                    prevent unauthorized changes, and maintain data integrity.
+                </p>
+                <ul>
+                    <li>
+                        <strong>UX:</strong> Relevant, empowering, and efficient
+                        interactions.
+                    </li>
+                    <li>
+                        <strong>Security:</strong> Only owners can modify/delete
+                        their content.
+                    </li>
+                    <li>
+                        <strong>Privacy & Compliance:</strong> Protects
+                        sensitive data and supports regulatory obligations.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="client-heading">
+                <h3 id="client-heading">
+                    Client-Side Conditional Rendering (React)
+                </h3>
+                <pre><code class="language-jsx" role="region" aria-label="Issue item with conditional actions">
+import { useUser } from "../context/UserContext"
+
+function IssueItem({ issue, onEdit, onDelete }) {
+  const { userState: { user } } = useUser()
+  const isOwner = String(issue.userId) === String(user?._id)
+
+  return (
+    &lt;article className="card"&gt;
+      &lt;h4&gt;{issue.title}&lt;/h4&gt;
+      &lt;p&gt;{issue.description}&lt;/p&gt;
+
+      {isOwner &amp;&amp; (
+        &lt;div className="btn-row"&gt;
+          &lt;button className="btn-secondary" onClick={() =&gt; onEdit(issue)}&gt;Edit&lt;/button&gt;
+          &lt;button className="btn-danger" onClick={() =&gt; onDelete(issue._id)}&gt;Delete&lt;/button&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/article&gt;
+  )
+}
+</code></pre>
+                <p class="note">
+                    Note: The client should <em>hide</em> actions for
+                    non-owners, but security must be enforced on the server.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="server-heading">
+                <h3 id="server-heading">
+                    Server-Side Authorization (Express + Mongoose)
+                </h3>
+                <pre><code class="language-jsx" role="region" aria-label="Secure update and delete routes">
+const express = require("express")
+const Issue = require("../models/Issue")
+const issueRouter = express.Router()
+
+// UPDATE (owner only)
+issueRouter.put("/:issueId", async (req, res, next) =&gt; {
+  try {
+    const updated = await Issue.findOneAndUpdate(
+      { _id: req.params.issueId, userId: req.auth._id }, // enforce ownership
+      req.body,
+      { new: true }
+    )
+    if (!updated) {
+      res.status(403)
+      return next(new Error("Not authorized to update this issue"))
+    }
+    res.status(200).send(updated)
+  } catch (err) {
+    res.status(500)
+    next(err)
+  }
+})
+
+// DELETE (owner only)
+issueRouter.delete("/:issueId", async (req, res, next) =&gt; {
+  try {
+    const deleted = await Issue.findOneAndDelete({
+      _id: req.params.issueId,
+      userId: req.auth._id // enforce ownership
+    })
+    if (!deleted) {
+      res.status(403)
+      return next(new Error("Not authorized to delete this issue"))
+    }
+    res.status(200).send({ msg: "Issue removed" })
+  } catch (err) {
+    res.status(500)
+    next(err)
+  }
+})
+
+module.exports = issueRouter
+</code></pre>
+                <p class="note">
+                    Pair UI checks with
+                    <strong>authorization filters</strong> (e.g.,
+                    <code>{ _id, userId: req.auth._id }</code>) so non-owners
+                    cannot forge requests.
+                </p>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/lh7qzQ-GS6U?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 — Related Topic"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=lh7qzQ-GS6U&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=23"
+                                target="_blank"
+                                rel="noopener">
+                                Open in Browser
+                            </a>
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-005"
+            data-lesson-title="Conditional Views"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-005"
+            data-lesson-title="Conditional Views"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

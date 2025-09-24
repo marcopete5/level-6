@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rock the Vote: Advanced Features — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Rock the Vote: Advanced Features</h1>
+                <h2>Assignment</h2>
+            </header>
+
+            <div class="section" aria-labelledby="intro-heading">
+                <h3 id="intro-heading">Overview</h3>
+                <p>
+                    In this final phase, you’ll enhance your app with security
+                    upgrades, protected UX flows, and voting. Implement the
+                    items below across both backend and frontend to complete
+                    Part 3 of Rock the Vote.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="backend-heading">
+                <h3 id="backend-heading">Backend Enhancements</h3>
+                <h4>Updated User Model</h4>
+                <ul>
+                    <li>
+                        <strong>Password Hashing:</strong> Use
+                        <code>bcrypt</code> in a pre-save hook to hash passwords
+                        before storing.
+                    </li>
+                    <li>
+                        <strong>Password Removal:</strong> Add
+                        <code>userSchema.methods.withoutPassword()</code> to
+                        strip the password prior to sending user data to clients
+                        or signing tokens.
+                    </li>
+                </ul>
+
+                <h4>Updated Login and Signup Routes</h4>
+                <ul>
+                    <li>
+                        <strong>Signup:</strong> Hash the password, save the
+                        user, return
+                        <code>{ user: withoutPassword(), token }</code>.
+                    </li>
+                    <li>
+                        <strong>Login:</strong> Verify the password with
+                        <code>bcrypt.compare()</code>, return
+                        <code>{ user: withoutPassword(), token }</code>.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="frontend-heading">
+                <h3 id="frontend-heading">Frontend Enhancements</h3>
+                <h4>Conditional Rendering</h4>
+                <ul>
+                    <li>
+                        Show different UI when a token is present
+                        (authenticated) vs. absent (guest).
+                    </li>
+                    <li>
+                        Persist user and token in <code>localStorage</code>;
+                        initialize context from storage on load.
+                    </li>
+                </ul>
+
+                <h4>Protected Routes</h4>
+                <ul>
+                    <li>
+                        Use React Router to gate pages that require
+                        authentication.
+                    </li>
+                    <li>Redirect unauthenticated users to the login page.</li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="voting-heading">
+                <h3 id="voting-heading">Voting Functionality</h3>
+                <h4>Upvotes &amp; Downvotes</h4>
+                <ul>
+                    <li>
+                        Add upvote/downvote buttons to each Issue component.
+                    </li>
+                    <li>
+                        On click, send a request to update the issue’s votes and
+                        optimistically update UI state.
+                    </li>
+                    <li>
+                        Display current vote totals and sort the feed by upvotes
+                        (descending).
+                    </li>
+                </ul>
+
+                <details>
+                    <summary style="font-size: 1.1rem; margin: 0.5rem 0">
+                        Example Snippets (Optional)
+                    </summary>
+                    <p><strong>Server route (concept):</strong></p>
+                    <pre><code class="language-jsx">issueRouter.put('/upvotes/:issueId', async (req, res, next) =&gt; {
+  try {
+    const updated = await Issue.findByIdAndUpdate(
+      req.params.issueId,
+      { $addToSet: { upvotes: req.auth._id }, $pull: { downvotes: req.auth._id } },
+      { new: true }
+    );
+    res.status(201).send(updated);
+  } catch (err) { res.status(500); next(err); }
+});
+</code></pre>
+                    <p><strong>Client sort (concept):</strong></p>
+                    <pre><code class="language-jsx">const sorted = [...allIssues].sort((a, b) =&gt; (b.upvotes?.length || 0) - (a.upvotes?.length || 0));
+</code></pre>
+                </details>
+            </div>
+
+            <div>
+                <h3>DEMO OF COMPLETED PROJECT</h3>
+                <iframe
+                    class="video-embed"
+                    width="1280"
+                    height="720"
+                    style="border: 0"
+                    scrolling="no"
+                    src="https://go.screenpal.com/player/cTQZVAnDo0U?controls=1&share=1&download=1&embed=1&cl=1&width=1280&height=720&overlays=1&ff=1"
+                    allowfullscreen="true"></iframe>
+            </div>
+
+            <div class="section" aria-labelledby="submission-heading">
+                <h3 id="submission-heading">Submitting Your Work</h3>
+                <ul>
+                    <li>Commit and push to GitHub regularly.</li>
+                    <li>
+                        Verify all protected routes, auth flows, and voting
+                        endpoints with Postman.
+                    </li>
+                    <li>
+                        Ensure the UI reflects vote changes and issues are
+                        sorted by upvotes.
+                    </li>
+                </ul>
+                <p>
+                    <strong>Tip:</strong> Use Postman to seed a few issues and
+                    test your vote routes quickly.
+                </p>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-008"
+            data-lesson-title="Rock the Vote: Advanced Features"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-008"
+            data-lesson-title="Rock the Vote: Advanced Features"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

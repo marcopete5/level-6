@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Displaying Username — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Displaying Username</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        Display the username of the user who created the issue
+                        on each Issue component.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/hsHMXzM_rYY"
+                    title="Displaying Username"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/hsHMXzM_rYY"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="importance-heading">
+                <h3 id="importance-heading">
+                    Why Include &amp; Show the Username?
+                </h3>
+                <ul>
+                    <li>
+                        <strong>Accountability &amp; Context:</strong> See who
+                        reported/owns an issue at a glance.
+                    </li>
+                    <li>
+                        <strong>Data Integrity:</strong> Attribute issues
+                        consistently and maintain a clear audit trail.
+                    </li>
+                    <li>
+                        <strong>Querying &amp; Views:</strong> Filter by user;
+                        support user-specific feeds and analytics.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="schema-heading">
+                <h3 id="schema-heading">
+                    Add <code>username</code> to the Issue Schema
+                </h3>
+                <pre><code class="language-jsx" role="region" aria-label="Issue schema with username">
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const issueSchema = new Schema({
+  title:       { type: String, required: true },
+  description: { type: String, required: true },
+  imgUrl:      { type: String },
+  userId:      { type: Schema.Types.ObjectId, ref: "User" },
+  username:    { type: String, required: true } // display name of creator
+});
+
+module.exports = mongoose.model('Issue', issueSchema);
+</code></pre>
+                <p class="note">
+                    Ensure your auth token includes <code>username</code> so you
+                    can set it from <code>req.auth</code> on creation.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="router-heading">
+                <h3 id="router-heading">Assign Username on Create (Router)</h3>
+                <pre><code class="language-jsx" role="region" aria-label="Issue POST route assigns username and userId">
+const express = require('express');
+const issueRouter = express.Router();
+const Issue = require('../models/issue');
+
+issueRouter.post('/', async (req, res, next) =&gt; {
+  try {
+    req.body.username = req.auth.username; // from verified JWT
+    req.body.userId   = req.auth._id;
+    const newIssue    = new Issue(req.body);
+    const savedIssue  = await newIssue.save();
+    return res.status(201).send(savedIssue);
+  } catch (error) {
+    res.status(500);
+    return next(error);
+  }
+});
+
+module.exports = issueRouter;
+</code></pre>
+            </div>
+
+            <div class="section" aria-labelledby="ui-heading">
+                <h3 id="ui-heading">Display Username in the UI (React)</h3>
+                <pre><code class="language-jsx" role="region" aria-label="Issue component showing username">
+import React from 'react';
+
+function Issue(props) {
+  const { title, description, imgUrl, username } = props;
+
+  return (
+    &lt;article className="card"&gt;
+      &lt;header className="card-header"&gt;
+        &lt;h4 className="muted"&gt;{username}&lt;/h4&gt;
+        &lt;h3&gt;{title}&lt;/h3&gt;
+      &lt;/header&gt;
+
+      &lt;p&gt;{description}&lt;/p&gt;
+      {imgUrl &amp;&amp; &lt;img src={imgUrl} alt={title} className="responsive-img" /&gt;}
+    &lt;/article&gt;
+  );
+}
+
+export default Issue;
+</code></pre>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson &amp; Resources
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/bI9hpw0QNxg?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 — Related Topic"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=bI9hpw0QNxg&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=23"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+
+                        <h4>Clone Repo</h4>
+                        <p>
+                            Follow instructions for cloning
+                            <strong>part-3-end</strong>:
+                        </p>
+                        <p>
+                            <a
+                                href="https://github.com/v-school/rlm-token-auth-series-context/tree/main"
+                                target="_blank"
+                                rel="noopener">
+                                GitHub — rlm-token-auth-series-context (main)
+                            </a>
+                        </p>
+
+                        <h4>
+                            Alternate Solution using
+                            <code>&lt;Outlet /&gt;</code>
+                        </h4>
+                        <p>
+                            Protect routes with a nested route strategy:
+                            <a
+                                href="https://dev.to/iamandrewluca/private-route-in-react-router-v6-lg5"
+                                target="_blank"
+                                rel="noopener"
+                                >Private Route in React Router v6</a
+                            >
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-006"
+            data-lesson-title="Displaying Username"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-006"
+            data-lesson-title="Displaying Username"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

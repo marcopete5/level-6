@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            Schema Method to Remove Passwords — Advanced Features (L6)
+        </title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Schema Method to Remove Passwords</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        Write a user schema method to remove the password from a
+                        user object.
+                    </li>
+                    <li>
+                        Incorporate this method in both login and signup routes.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/tCOBezNgO38"
+                    title="Schema Method to Remove Passwords"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/tCOBezNgO38"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="security-heading">
+                <h3 id="security-heading">
+                    Securing User Data: Removing Passwords from User Objects
+                </h3>
+                <p>
+                    Never include passwords—hashed or otherwise—in responses or
+                    tokens. Strip them before signing JWTs and before sending
+                    user objects back to the client.
+                </p>
+
+                <h4>Define the Schema Method</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+// models/user.js
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const { Schema } = mongoose
+
+const userSchema = new Schema({
+  username: { type: String, required: true, lowercase: true, unique: true },
+  password: { type: String, required: true },
+  memberSince: { type: Date, default: Date.now },
+  isAdmin: { type: Boolean, default: false }
+})
+
+// Remove password before sending user outward
+userSchema.methods.withoutPassword = function () {
+  const user = this.toObject()
+  delete user.password
+  return user
+}
+
+// (from prior lesson) Compare login attempt
+userSchema.methods.checkPassword = async function (passwordAttempt) {
+  return bcrypt.compare(passwordAttempt, this.password)
+}
+
+module.exports = mongoose.model('User', userSchema)
+      </code></pre>
+
+                <h4>Use in <code>/login</code> Route</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+// routes/authRouter.js (excerpt)
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
+const authRouter = express.Router()
+
+authRouter.post('/login', async (req, res, next) => {
+  try {
+    const { username, password } = req.body
+    const user = await User.findOne({ username: username.toLowerCase() })
+    if (!user) { res.status(403); return next(new Error('Incorrect Username or Password')) }
+
+    const isMatch = await user.checkPassword(password)
+    if (!isMatch) { res.status(403); return next(new Error('Incorrect Username or Password')) }
+
+    const safeUser = user.withoutPassword()
+    const token = jwt.sign(safeUser, process.env.SECRET)
+    return res.status(200).send({ token, user: safeUser })
+  } catch (err) {
+    res.status(500)
+    return next(err)
+  }
+})
+      </code></pre>
+
+                <h4>Use in <code>/signup</code> Route</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+// routes/authRouter.js (excerpt)
+authRouter.post('/signup', async (req, res, next) => {
+  try {
+    const exists = await User.findOne({ username: req.body.username.toLowerCase() })
+    if (exists) { res.status(403); return next(new Error('Username is already taken')) }
+
+    const newUser = new User(req.body)
+    const saved = await newUser.save()
+    const safeUser = saved.withoutPassword()
+    const token = jwt.sign(safeUser, process.env.SECRET)
+    return res.status(201).send({ token, user: safeUser })
+  } catch (err) {
+    res.status(500)
+    return next(err)
+  }
+})
+      </code></pre>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/BYa_oLIlluU?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 — Removing Password Field"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=BYa_oLIlluU&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=21"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+
+                        <h3>
+                            <strong
+                                >Understanding Mongoose Method for Removing
+                                Password Field</strong
+                            >
+                        </h3>
+                        <p>
+                            Define a reusable instance method to omit sensitive
+                            fields before returning documents to clients or
+                            signing tokens.
+                        </p>
+
+                        <h4>Method Definition</h4>
+                        <pre><code class="language-jsx" role="region" aria-label="Code block">
+userSchema.methods.withoutPassword = function () {
+  const user = this.toObject()
+  delete user.password
+  return user
+}
+          </code></pre>
+
+                        <h4>Why it Matters</h4>
+                        <ul>
+                            <li>
+                                <strong>Prevents Exposure:</strong> Keeps even
+                                hashed passwords out of responses/tokens.
+                            </li>
+                            <li>
+                                <strong>Reduces Attack Surface:</strong>
+                                Transmit only what the client needs.
+                            </li>
+                            <li>
+                                <strong>Best Practice:</strong> Centralize
+                                sanitization logic on the model.
+                            </li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-003"
+            data-lesson-title="Schema Method to Remove Passwords"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-003"
+            data-lesson-title="Schema Method to Remove Passwords"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rock the Vote: Final Touches — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Rock the Vote: Final Touches</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="intro-heading">
+                <h3 id="intro-heading">Congratulations!</h3>
+                <p>
+                    You’re at the finish line. In this phase you’ll add the
+                    comments feature and tighten up data fetching so the UI
+                    stays fast and consistent.
+                </p>
+            </div>
+
+            <!-- BACKEND -->
+            <div class="section" aria-labelledby="backend-heading">
+                <h3 id="backend-heading">Backend Requirements</h3>
+
+                <h4>Comment Model &amp; Routes</h4>
+                <ul>
+                    <li>
+                        <strong>Model:</strong> <code>text</code>,
+                        <code>issueId</code>, <code>userId</code> (all required)
+                        and timestamps.
+                    </li>
+                    <li>
+                        <strong>Routes (CRUD):</strong> Create, read, update,
+                        delete comments. Protect all with JWT.
+                    </li>
+                    <li>
+                        <strong>Authorization:</strong> Only comment owners can
+                        edit/delete their comments.
+                    </li>
+                </ul>
+
+                <details>
+                    <summary style="font-size: 1.05rem; margin: 0.5rem 0">
+                        Sample: Comment Model &amp; Protected Routes (Optional)
+                    </summary>
+                    <pre><code class="language-jsx">/* models/Comment.js */
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+
+const commentSchema = new Schema({
+  text: { type: String, required: true, trim: true },
+  issueId: { type: Schema.Types.ObjectId, ref: 'Issue', required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+}, { timestamps: true });
+
+module.exports = mongoose.model('Comment', commentSchema);
+</code></pre>
+                    <pre><code class="language-jsx">/* routes/commentRouter.js */
+const express = require('express');
+const Comment = require('../models/Comment');
+const commentRouter = express.Router();
+
+// CREATE
+commentRouter.post('/', async (req, res, next) =&gt; {
+  try {
+    const body = { ...req.body, userId: req.auth._id };
+    const saved = await Comment.create(body);
+    return res.status(201).send(saved);
+  } catch (err) { res.status(500); return next(err); }
+});
+
+// READ (by issue)
+commentRouter.get('/issue/:issueId', async (req, res, next) =&gt; {
+  try {
+    const list = await Comment.find({ issueId: req.params.issueId })
+      .sort({ createdAt: 1 });
+    return res.status(200).send(list);
+  } catch (err) { res.status(500); return next(err); }
+});
+
+// UPDATE (owner only)
+commentRouter.put('/:commentId', async (req, res, next) =&gt; {
+  try {
+    const updated = await Comment.findOneAndUpdate(
+      { _id: req.params.commentId, userId: req.auth._id },
+      req.body,
+      { new: true }
+    );
+    return res.status(200).send(updated);
+  } catch (err) { res.status(500); return next(err); }
+});
+
+// DELETE (owner only)
+commentRouter.delete('/:commentId', async (req, res, next) =&gt; {
+  try {
+    await Comment.findOneAndDelete({ _id: req.params.commentId, userId: req.auth._id });
+    return res.status(200).send({ msg: 'Comment deleted' });
+  } catch (err) { res.status(500); return next(err); }
+});
+
+module.exports = commentRouter;
+</code></pre>
+                </details>
+
+                <h4>Integrate with Existing Auth</h4>
+                <ul>
+                    <li>
+                        Ensure all comment routes sit under your protected path
+                        (e.g., <code>/api/main/comments</code>).
+                    </li>
+                    <li>
+                        Verify JWT and use <code>req.auth._id</code> for
+                        ownership checks.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- FRONTEND -->
+            <div class="section" aria-labelledby="frontend-heading">
+                <h3 id="frontend-heading">Frontend Requirements</h3>
+
+                <h4>Comment Functionality</h4>
+                <ul>
+                    <li>
+                        <strong>Form:</strong> Add a comment form with non-empty
+                        validation.
+                    </li>
+                    <li>
+                        <strong>Display:</strong> Fetch all comments once per
+                        issue view, then render those matching the current
+                        issue.
+                    </li>
+                </ul>
+
+                <details>
+                    <summary style="font-size: 1.05rem; margin: 0.5rem 0">
+                        Sample: Issue Detail &amp; Comments (Optional)
+                    </summary>
+                    <pre><code class="language-jsx">// userAxios assumed to include the token via interceptor
+function IssueDetail({ issueId }) {
+  const [comments, setComments] = React.useState([]);
+  const [text, setText] = React.useState('');
+
+  React.useEffect(() =&gt; {
+    (async () =&gt; {
+      const res = await userAxios.get(`/api/main/comments/issue/${issueId}`);
+      setComments(res.data);
+    })();
+  }, [issueId]);
+
+  async function addComment(e){
+    e.preventDefault();
+    if(!text.trim()) return;
+    const res = await userAxios.post('/api/main/comments', { text, issueId });
+    setComments(prev =&gt; [...prev, res.data]);
+    setText('');
+  }
+
+  return (
+    &lt;section&gt;
+      &lt;h3&gt;Comments&lt;/h3&gt;
+      &lt;form onSubmit={addComment}&gt;
+        &lt;input value={text} onChange={e =&gt; setText(e.target.value)} placeholder="Add a comment"/&gt;
+        &lt;button type="submit"&gt;Post&lt;/button&gt;
+      &lt;/form&gt;
+
+      &lt;ul&gt;
+        {comments.map(c =&gt; (
+          &lt;li key={c._id}&gt;&lt;strong&gt;{new Date(c.createdAt).toLocaleString()}&lt;/strong&gt; — {c.text}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/section&gt;
+  );
+}
+</code></pre>
+                </details>
+
+                <h4>Update Existing Pages</h4>
+                <ul>
+                    <li>
+                        <strong>Issue Detail:</strong> Show the comment list +
+                        form.
+                    </li>
+                    <li>
+                        <strong>Consistency:</strong> Reuse components/styles
+                        you already created for public/profile pages.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- COMPLETION -->
+            <div class="section" aria-labelledby="completion-heading">
+                <h3 id="completion-heading">Project Completion</h3>
+                <h4>Testing &amp; Validation</h4>
+                <ul>
+                    <li>
+                        Login, create issues, vote, add/edit/delete your
+                        comments, and confirm auth guards work.
+                    </li>
+                    <li>
+                        Try protected routes without a token and verify proper
+                        errors.
+                    </li>
+                </ul>
+
+                <h4>Documentation</h4>
+                <ul>
+                    <li>
+                        Document new comment endpoints and the UI flow to
+                        add/display comments.
+                    </li>
+                    <li>
+                        Note any decisions about fetching strategies and state
+                        shape.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- HINTS -->
+            <div class="section" aria-labelledby="hints-heading">
+                <h3 id="hints-heading">Hinting Questions</h3>
+                <ul>
+                    <li>
+                        <strong>Data Retrieval:</strong> Can you fetch all
+                        comments for an issue in a single request when entering
+                        its page?
+                    </li>
+                    <li>
+                        <strong>Filtering:</strong> If you already have comments
+                        in state, can you filter by <code>issueId</code> locally
+                        rather than re-querying?
+                    </li>
+                    <li>
+                        <strong>Frontend Efficiency:</strong> After creating a
+                        comment, can you append it to state rather than
+                        refetching?
+                    </li>
+                </ul>
+            </div>
+
+            <!-- CONSOLIDATED REQUIREMENTS -->
+            <div class="section" aria-labelledby="reqs-heading">
+                <h3 id="reqs-heading">Rock the Vote: Project Requirements</h3>
+
+                <h4>Backend</h4>
+                <ul>
+                    <li>
+                        <strong>User Management:</strong> Model with
+                        <code>username</code>, <code>password</code>; bcrypt
+                        hashing; <code>withoutPassword()</code>; JWT-based
+                        signup/login routes.
+                    </li>
+                    <li>
+                        <strong>Issue Management:</strong> Model + CRUD; sort by
+                        votes; edit/delete ownership checks; one upvote/downvote
+                        per user per issue.
+                    </li>
+                    <li>
+                        <strong>Comment Management:</strong> Model with
+                        <code>text</code>, <code>issueId</code>,
+                        <code>userId</code>; create &amp; read routes; comments
+                        shown on issue detail pages.
+                    </li>
+                    <li>
+                        <strong>Security:</strong> Protect issue/comment routes;
+                        only creators can edit/delete their resources.
+                    </li>
+                </ul>
+
+                <h4>Frontend</h4>
+                <ul>
+                    <li>
+                        <strong>Auth:</strong> Login, signup, logout;
+                        context-managed auth state; auto routing on
+                        login/logout; protected routes.
+                    </li>
+                    <li>
+                        <strong>Pages:</strong> Public (all issues sorted),
+                        Profile (user’s issues), Issue detail (comments + form).
+                    </li>
+                    <li>
+                        <strong>Issues:</strong> Create form; vote buttons; sort
+                        by votes; enforce one up/downvote per issue per user;
+                        edit/delete by owner.
+                    </li>
+                    <li>
+                        <strong>Comments:</strong> Add form; display on issue
+                        detail.
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h3>DEMO OF COMPLETED PROJECT</h3>
+                <iframe
+                    class="video-embed"
+                    width="1280"
+                    height="720"
+                    style="border: 0"
+                    scrolling="no"
+                    src="https://go.screenpal.com/player/cTQZ2QnDbE0?controls=1&share=1&download=1&embed=1&cl=1&width=1280&height=720&overlays=1&ff=1"
+                    allowfullscreen="true"></iframe>
+            </div>
+            <!-- RUBRIC -->
+            <div class="section" aria-labelledby="rubric-heading">
+                <h3 id="rubric-heading">Task Rubric</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Criteria</th>
+                                <th>Level 1: Emerging</th>
+                                <th>Level 2: Developing</th>
+                                <th>Level 3: Proficient</th>
+                                <th>Level 4: Mastery</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Authentication</td>
+                                <td>
+                                    JWT generation/validation broken. Signup
+                                    fails.
+                                </td>
+                                <td>
+                                    Auth works but JWT not used correctly on
+                                    protected requests.
+                                </td>
+                                <td>
+                                    Auth works and JWT sent with headers. Minor
+                                    organization issues.
+                                </td>
+                                <td>
+                                    Auth solid, JWT headers correct, code clean
+                                    and organized.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Express Routers</td>
+                                <td>
+                                    JWT/authorization flawed; endpoints missing.
+                                </td>
+                                <td>
+                                    JWT present but payload usage off; some ops
+                                    missing or misassigned.
+                                </td>
+                                <td>
+                                    All ops present; minor edit/delete comment
+                                    issues.
+                                </td>
+                                <td>
+                                    All ops complete, authz correct, code
+                                    well-structured.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Mongoose models</td>
+                                <td>
+                                    Models missing/incorrect; no password check
+                                    method.
+                                </td>
+                                <td>
+                                    Comments model missing or refs wrong;
+                                    compare mishandled.
+                                </td>
+                                <td>
+                                    Models correct; compare works; some
+                                    organization issues.
+                                </td>
+                                <td>
+                                    Models correct; compare works; clean
+                                    naming/structure.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>React Router &amp; Protected Routes</td>
+                                <td>Required pages missing; no protection.</td>
+                                <td>
+                                    Reroute issues; protection unreliable; can’t
+                                    view own posts.
+                                </td>
+                                <td>
+                                    Reroute ok; protection good; minor
+                                    organization issues.
+                                </td>
+                                <td>
+                                    Reroute + protection solid; clean routing
+                                    structure.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Styling</td>
+                                <td>Minimal; unorganized; not responsive.</td>
+                                <td>
+                                    Glitchy; not responsive; CSS disorganized.
+                                </td>
+                                <td>
+                                    Clean with minor layout issues; somewhat
+                                    responsive.
+                                </td>
+                                <td>
+                                    Clean, professional, responsive; organized
+                                    CSS.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUBMISSION -->
+            <div class="section" aria-labelledby="submission-heading">
+                <h3 id="submission-heading">Submitting Assignments</h3>
+                <p>
+                    Please remember to regularly submit your assignments to
+                    GitHub!
+                </p>
+
+                <h4>Using Git Command Line</h4>
+                <pre><code class="language-jsx">
+git add &lt;relative/path/to/assignment/folder&gt;
+git commit -m "submitting assignment &lt;name&gt;"
+git push origin main
+
+</code></pre>
+
+                <h4>Using VSCode's Source Control</h4>
+                <ol>
+                    <li>Open VSCode and click on the Source Control tab.</li>
+                    <li>Stage Changes: Click the “+” next to each file.</li>
+                    <li>Commit: Enter a message and click Commit.</li>
+                    <li>Push: Click “Sync Changes”.</li>
+                </ol>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-009"
+            data-lesson-title="Rock the Vote: Final Touches"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-009"
+            data-lesson-title="Rock the Vote: Final Touches"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

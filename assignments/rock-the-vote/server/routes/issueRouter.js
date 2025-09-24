@@ -2,10 +2,20 @@ const express = require('express');
 const issueRouter = express.Router();
 const Issue = require('../models/issue.js');
 
-// Get All Issues
+// Get All Issues (Sorted by Votes)
 issueRouter.get('/', (req, res, next) => {
     Issue.find()
-        .then((issues) => res.status(200).send(issues))
+        .populate('user', 'username')
+        .then((issues) => {
+            // Sort issues by net votes (upvotes - downvotes)
+            const sortedIssues = issues.sort(
+                (a, b) =>
+                    b.upvotedBy.length -
+                    b.downvotedBy.length -
+                    (a.upvotedBy.length - a.downvotedBy.length)
+            );
+            return res.status(200).send(sortedIssues);
+        })
         .catch((err) => {
             res.status(500);
             return next(err);
@@ -35,42 +45,34 @@ issueRouter.post('/', (req, res, next) => {
         });
 });
 
-// Delete Issue
-issueRouter.delete('/:issueId', (req, res, next) => {
-    Issue.findOneAndDelete({ _id: req.params.issueId, user: req.auth._id })
-        .then((deletedIssue) => {
-            if (!deletedIssue) {
-                res.status(404);
-                return next(
-                    new Error('Issue not found or user not authorized')
-                );
-            }
-            return res
-                .status(200)
-                .send(`Successfully deleted issue: ${deletedIssue.title}`);
-        })
+// Upvote an Issue
+issueRouter.put('/upvote/:issueId', (req, res, next) => {
+    Issue.findOneAndUpdate(
+        { _id: req.params.issueId },
+        {
+            $addToSet: { upvotedBy: req.auth._id },
+            $pull: { downvotedBy: req.auth._id }
+        },
+        { new: true }
+    )
+        .then((updatedIssue) => res.status(200).send(updatedIssue))
         .catch((err) => {
             res.status(500);
             return next(err);
         });
 });
 
-// Update Issue
-issueRouter.put('/:issueId', (req, res, next) => {
+// Downvote an Issue
+issueRouter.put('/downvote/:issueId', (req, res, next) => {
     Issue.findOneAndUpdate(
-        { _id: req.params.issueId, user: req.auth._id },
-        req.body,
+        { _id: req.params.issueId },
+        {
+            $addToSet: { downvotedBy: req.auth._id },
+            $pull: { upvotedBy: req.auth._id }
+        },
         { new: true }
     )
-        .then((updatedIssue) => {
-            if (!updatedIssue) {
-                res.status(404);
-                return next(
-                    new Error('Issue not found or user not authorized')
-                );
-            }
-            return res.status(200).send(updatedIssue);
-        })
+        .then((updatedIssue) => res.status(200).send(updatedIssue))
         .catch((err) => {
             res.status(500);
             return next(err);

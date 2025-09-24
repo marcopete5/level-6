@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Handling Login/Signup Errors — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Handling Login/Signup Errors</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        Show login and signup errors on the form to inform
+                        users.
+                    </li>
+                    <li>
+                        Conditionally render either the login or signup form.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/Lu9Y1tPE0ZQ"
+                    title="Handling Login/Signup Errors"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/Lu9Y1tPE0ZQ"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="why-errors-heading">
+                <h3 id="why-errors-heading">
+                    Why Display Errors (and why keep them vague)
+                </h3>
+                <ul>
+                    <li>
+                        <strong>UX:</strong> Immediate feedback helps users
+                        correct input and build trust.
+                    </li>
+                    <li>
+                        <strong>Security:</strong> Vague messages prevent
+                        username/password enumeration and reduce brute-force
+                        hints.
+                    </li>
+                    <li>
+                        <strong>Support:</strong> Clear, actionable guidance
+                        reduces support load and drop-off.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="impl-heading">
+                <h3 id="impl-heading">Implementation Examples</h3>
+
+                <pre><code class="language-jsx" role="region" aria-label="Context error helpers">
+// In your UserContext.jsx
+function handleAuthErr(errMsg) {
+  setUserState(prev =&gt; ({ ...prev, errMsg }))
+}
+
+function resetAuthErr() {
+  setUserState(prev =&gt; ({ ...prev, errMsg: "" }))
+}
+</code></pre>
+
+                <pre><code class="language-jsx" role="region" aria-label="Display error in form">
+// In your AuthForm.jsx
+export default function AuthForm({ submit, btnText, errMsg }) {
+  const [inputs, setInputs] = React.useState({ username: "", password: "" })
+
+  function handleChange(e) {
+    const { name, value } = e.target
+    setInputs(prev =&gt; ({ ...prev, [name]: value }))
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    submit(inputs)
+  }
+
+  return (
+    &lt;form onSubmit={handleSubmit} className="card"&gt;
+      &lt;label&gt;Username&lt;/label&gt;
+      &lt;input name="username" value={inputs.username} onChange={handleChange} /&gt;
+
+      &lt;label&gt;Password&lt;/label&gt;
+      &lt;input type="password" name="password" value={inputs.password} onChange={handleChange} /&gt;
+
+      {errMsg &amp;&amp; &lt;p style={{ color: "red" }} role="alert"&gt;{errMsg}&lt;/p&gt;}
+      &lt;button className="btn-primary"&gt;{btnText}&lt;/button&gt;
+    &lt;/form&gt;
+  )
+}
+</code></pre>
+
+                <pre><code class="language-jsx" role="region" aria-label="Toggle login/signup and reset errors">
+// In your Auth.jsx (container toggling forms)
+import { useUser } from "../context/UserContext"
+import AuthForm from "./AuthForm"
+
+export default function Auth() {
+  const { signup, login, userState: { errMsg }, resetAuthErr } = useUser()
+  const [isMember, setIsMember] = React.useState(true)
+
+  function toggleForm() {
+    setIsMember(prev =&gt; !prev)
+    resetAuthErr() // clear stale errors when switching
+  }
+
+  return (
+    &lt;div className="grid two-col gap-xl"&gt;
+      {isMember ? (
+        &lt;AuthForm submit={login} btnText="Log In" errMsg={errMsg} /&gt;
+      ) : (
+        &lt;AuthForm submit={signup} btnText="Sign Up" errMsg={errMsg} /&gt;
+      )}
+
+      &lt;button className="btn-link" onClick={toggleForm}&gt;
+        {isMember ? "Need an account? Sign up" : "Already have an account? Log in"}
+      &lt;/button&gt;
+    &lt;/div&gt;
+  )
+}
+</code></pre>
+
+                <pre><code class="language-jsx" role="region" aria-label="Vague backend error responses">
+// On the server (auth routes), prefer vague messages
+if (!user || !(await user.checkPassword(req.body.password))) {
+  res.status(403)
+  return next(new Error("Incorrect Username or Password"))
+}
+</code></pre>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/eQGuMn8lYow?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 — Related Topic"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=eQGuMn8lYow&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=22"
+                                target="_blank"
+                                rel="noopener">
+                                Open in Browser
+                            </a>
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-004"
+            data-lesson-title="Handling Login/Signup Errors"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-004"
+            data-lesson-title="Handling Login/Signup Errors"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

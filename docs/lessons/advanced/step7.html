@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MongoDB Update Operators — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">MongoDB Update Operators</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/rvxsDfAE7iY"
+                    title="MongoDB Update Operators"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/rvxsDfAE7iY"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="overview-heading">
+                <h3 id="overview-heading">Overview</h3>
+                <p>
+                    MongoDB’s update operators let you efficiently modify
+                    document fields and arrays—perfect for features like voting,
+                    tagging, counters, and more. Below we pair a practical
+                    voting example with a quick-reference of common operators.
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="schema-heading">
+                <h3 id="schema-heading">Issue Schema (with vote arrays)</h3>
+                <pre><code class="language-jsx" role="region" aria-label="Issue schema with upvotes and downvotes arrays">
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const issueSchema = new Schema({
+  title:       { type: String, required: true },
+  description: { type: String, required: true },
+  imgUrl:      { type: String },
+  userId:      { type: Schema.Types.ObjectId, ref: "User" },
+  username:    { type: String, required: true },
+  upvotes:     [{ type: Schema.Types.ObjectId, ref: "User" }],
+  downvotes:   [{ type: Schema.Types.ObjectId, ref: "User" }]
+});
+
+module.exports = mongoose.model("Issue", issueSchema);
+</code></pre>
+            </div>
+
+            <div class="section" aria-labelledby="route-heading">
+                <h3 id="route-heading">Upvote Route</h3>
+                <pre><code class="language-jsx" role="region" aria-label="Upvote route using $addToSet and $pull">
+issueRouter.put('/upvotes/:issueId', async (req, res, next) =&gt; {
+  try {
+    const updatedIssue = await Issue.findByIdAndUpdate(
+      req.params.issueId,
+      {
+        $addToSet: { upvotes: req.auth._id }, // add current user if not already present
+        $pull:     { downvotes: req.auth._id } // ensure user is removed from downvotes
+      },
+      { new: true }
+    );
+    return res.status(201).send(updatedIssue);
+  } catch (error) {
+    res.status(500);
+    return next(error);
+  }
+});
+</code></pre>
+            </div>
+
+            <div class="section" aria-labelledby="client-heading">
+                <h3 id="client-heading">Client-side Upvote Handler</h3>
+                <pre><code class="language-jsx" role="region" aria-label="Client upvote handler updating local state">
+async function handleUpvote(issueId) {
+  try {
+    const res = await userAxios.put(`/api/main/issues/upvotes/${issueId}`);
+    setAllIssues(prev =&gt; prev.map(i =&gt; i._id === issueId ? res.data : i));
+    setUserState(prev =&gt; ({
+      ...prev,
+      issues: prev.issues.map(i =&gt; i._id === issueId ? res.data : i)
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+}
+</code></pre>
+            </div>
+
+            <div class="section" aria-labelledby="operators-heading">
+                <h3 id="operators-heading">Common MongoDB Update Operators</h3>
+                <ul>
+                    <li>
+                        <strong>$set</strong> — set a field’s value.
+                        <pre><code class="language-jsx">{ $set: { status: "completed" } }</code></pre>
+                    </li>
+                    <li>
+                        <strong>$unset</strong> — remove a field.
+                        <pre><code class="language-jsx">{ $unset: { age: "" } }</code></pre>
+                    </li>
+                    <li>
+                        <strong>$inc</strong> — increment/decrement numeric
+                        fields.
+                        <pre><code class="language-jsx">{ $inc: { likes: 1 } }</code></pre>
+                    </li>
+                    <li>
+                        <strong>$addToSet</strong> — add to array if not already
+                        present.
+                        <pre><code class="language-jsx">{ $addToSet: { tags: "mongodb" } }</code></pre>
+                    </li>
+                    <li>
+                        <strong>$pull</strong> — remove matching entries from an
+                        array.
+                        <pre><code class="language-jsx">{ $pull: { tags: "mongodb" } }</code></pre>
+                    </li>
+                    <li>
+                        <strong>$push</strong> — append to an array (optionally
+                        with modifiers).
+                        <pre><code class="language-jsx">{ $push: { comments: { text: "Nice post!" } } }</code></pre>
+                    </li>
+                    <li>
+                        <strong>$pop</strong> — remove first or last array
+                        element.
+                        <pre><code class="language-jsx">{ $pop: { items: 1 } }  // last
+{ $pop: { items: -1 } } // first</code></pre>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/L3FvggiUj4Q?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 — Update Operators / Related Topic"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=L3FvggiUj4Q&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=25"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-007"
+            data-lesson-title="MongoDB Update Operators"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-007"
+            data-lesson-title="MongoDB Update Operators"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

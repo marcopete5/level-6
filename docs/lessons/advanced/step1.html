@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Hashing Passwords & Schema Hooks — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Hashing Passwords &amp; Schema Hooks</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        A student will create a pre-save hook, using
+                        <code>bcrypt</code>, to encrypt the user’s password in
+                        the user schema.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/Q-WE08xqR0Y"
+                    title="Hashing Passwords & Schema Hooks"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://www.youtube.com/watch?v=Q-WE08xqR0Y"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="bcrypt-heading">
+                <h3 id="bcrypt-heading">
+                    Understanding <code>bcrypt</code> and User Password Hashing
+                    in Token-Based Authentication
+                </h3>
+                <p>
+                    <strong>bcrypt</strong> is a password hashing function
+                    designed to securely store passwords. Instead of saving
+                    plain text, we persist a salted hash that’s resistant to
+                    brute-force attacks.
+                </p>
+
+                <h4>Pre-save Hook Example (async/await)</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+// In your user schema file
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const { Schema } = mongoose
+
+const userSchema = new Schema({
+  username: { type: String, required: true, lowercase: true, unique: true },
+  password: { type: String, required: true },
+  memberSince: { type: Date, default: Date.now },
+  isAdmin: { type: Boolean, default: false }
+})
+
+// Hash password before save if it has been modified
+userSchema.pre('save', async function(next) {
+  const user = this
+  if (user.isModified('password')) {
+    try {
+      const hash = await bcrypt.hash(user.password, 10) // 10 = salt rounds
+      user.password = hash
+    } catch (error) {
+      return next(error)
+    }
+  }
+  next()
+})
+
+module.exports = mongoose.model('User', userSchema)
+      </code></pre>
+
+                <p>
+                    <strong>Why hash?</strong> If your database were
+                    compromised, attackers would only see salted hashes, not the
+                    original passwords. bcrypt’s salt ensures identical
+                    passwords produce different hashes.
+                </p>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/M_utbR1EWx8?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Password Hashing (Part 1)"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=M_utbR1EWx8&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=18"
+                                target="_blank"
+                                rel="noopener"
+                                >Open Part 1 in Browser</a
+                            >
+                        </p>
+
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/XMM7AVa3CiA?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 Password Hashing (Part 2)"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=XMM7AVa3CiA&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=19"
+                                target="_blank"
+                                rel="noopener"
+                                >Open Part 2 in Browser</a
+                            >
+                        </p>
+
+                        <h3 id="repo-heading"><strong>Get Repo</strong></h3>
+                        <h4><strong>Part 3 start:</strong></h4>
+                        <pre><code class="language-bash" role="region" aria-label="Shell block">
+git clone https://github.com/VSchool/vite-token-auth-series-context-2-3
+cd vite-token-auth-series-context-2-3
+code .
+npm install
+rm -rf .git
+          </code></pre>
+
+                        <h4><strong>Part 3 end:</strong></h4>
+                        <pre><code class="language-bash" role="region" aria-label="Shell block">
+git clone git@github.com:VSchool/vite-token-auth-series-context-3.git
+cd vite-token-auth-series-context-3
+code .
+npm install
+rm -rf .git
+          </code></pre>
+
+                        <p>
+                            <a
+                                href="https://github.com/v-school/rlm-token-auth-series-context/tree/part-3-start"
+                                target="_blank"
+                                rel="noopener">
+                                GitHub — rlm-token-auth-series-context
+                                (part-3-start)
+                            </a>
+                        </p>
+
+                        <h3>
+                            <strong
+                                >Understanding Mongoose Middleware for Password
+                                Hashing</strong
+                            >
+                        </h3>
+                        <p>
+                            This pre-save middleware hashes the password only
+                            when it’s modified, preventing unnecessary
+                            re-hashing on unrelated updates.
+                        </p>
+                        <pre><code class="language-jsx" role="region" aria-label="Code block">
+// Callback-style variant (functionally equivalent)
+const bcrypt = require('bcrypt')
+
+userSchema.pre('save', function(next) {
+  const user = this
+  if (!user.isModified('password')) return next()
+
+  bcrypt.hash(user.password, 10, (err, hash) => {
+    if (err) return next(err)
+    user.password = hash
+    next()
+  })
+})
+          </code></pre>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script (Level 6, Section ADVANCED_FEATURES, Lesson 001) -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-001"
+            data-lesson-title="Hashing Passwords & Schema Hooks"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-001"
+            data-lesson-title="Hashing Passwords & Schema Hooks"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>

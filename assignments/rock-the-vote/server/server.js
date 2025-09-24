@@ -17,12 +17,12 @@ mongoose
 
 // Routes
 app.use('/auth', require('./routes/authRouter'));
-// Protect API routes
 app.use(
     '/api',
     expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
 );
 app.use('/api/issues', require('./routes/issueRouter'));
+app.use('/api/comments', require('./routes/commentRouter')); // Add comment router
 
 // Error handler
 app.use((err, req, res, next) => {

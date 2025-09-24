@@ -19,7 +19,7 @@ const userSchema = new Schema({
     }
 });
 
-// Pre-save hook to hash password
+// Pre-save hook to hash password before saving
 userSchema.pre('save', function (next) {
     const user = this;
     if (!user.isModified('password')) return next();
@@ -30,7 +30,7 @@ userSchema.pre('save', function (next) {
     });
 });
 
-// Method to check password
+// Method to check encrypted password on login
 userSchema.methods.checkPassword = function (passwordAttempt, callback) {
     bcrypt.compare(passwordAttempt, this.password, (err, isMatch) => {
         if (err) return callback(err);
@@ -38,7 +38,7 @@ userSchema.methods.checkPassword = function (passwordAttempt, callback) {
     });
 };
 
-// Method to remove password for token response
+// Method to remove password from user object before sending response
 userSchema.methods.withoutPassword = function () {
     const user = this.toObject();
     delete user.password;

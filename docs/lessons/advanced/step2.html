@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Schema Method to Check Passwords — Advanced Features (L6)</title>
+
+        <!-- Course stylesheet -->
+        <link rel="stylesheet" href="../styles.css" />
+
+        <!-- Prism syntax highlighting (theme + core + languages) -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
+
+        <style>
+            :focus {
+                outline: 3px solid #2563eb;
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <main class="slide-container" aria-labelledby="page-title">
+            <header class="slide-header">
+                <h1 id="page-title">Schema Method to Check Passwords</h1>
+                <h2>Lesson</h2>
+            </header>
+
+            <div class="section" aria-labelledby="objectives-heading">
+                <h3 id="objectives-heading">Learning Objectives</h3>
+                <ul>
+                    <li>
+                        Write a schema method using <code>bcrypt</code> to
+                        compare a hashed password with a provided password at
+                        login.
+                    </li>
+                    <li>Incorporate this method into the login flow.</li>
+                </ul>
+            </div>
+
+            <div class="section" aria-labelledby="lesson-video-heading">
+                <h3 id="lesson-video-heading">Lesson</h3>
+                <iframe
+                    class="video-embed"
+                    width="1184"
+                    height="666"
+                    src="https://www.youtube.com/embed/flAjU5MzpCw"
+                    title="Schema Method to Check Passwords"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <p>
+                    <a
+                        class="btn-primary"
+                        href="https://youtu.be/flAjU5MzpCw"
+                        target="_blank"
+                        rel="noopener"
+                        >Open in Browser</a
+                    >
+                </p>
+            </div>
+
+            <div class="section" aria-labelledby="verify-heading">
+                <h3 id="verify-heading">
+                    Verifying Passwords with <code>bcrypt</code> in Token-Based
+                    Authentication
+                </h3>
+                <p>
+                    When a user logs in, compare the plaintext password attempt
+                    to the stored <em>hashed</em> password using
+                    <code>bcrypt.compare</code>. Expose this as an instance
+                    method on your User schema.
+                </p>
+
+                <h4>Schema Method (async/await)</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+// userSchema.js
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const { Schema } = mongoose
+
+const userSchema = new Schema({
+  username: { type: String, required: true, lowercase: true, unique: true },
+  password: { type: String, required: true },
+  memberSince: { type: Date, default: Date.now },
+  isAdmin: { type: Boolean, default: false }
+})
+
+// Compare a login attempt with the stored hash
+userSchema.methods.checkPassword = async function (passwordAttempt) {
+  try {
+    return bcrypt.compare(passwordAttempt, this.password)
+  } catch (error) {
+    throw error
+  }
+}
+
+module.exports = mongoose.model('User', userSchema)
+      </code></pre>
+
+                <h4>Using the Method in a Login Route</h4>
+                <pre><code class="language-jsx" role="region" aria-label="Code block">
+// authRouter.js (excerpt)
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const User = require('../models/user.js')
+const authRouter = express.Router()
+
+authRouter.post('/login', async (req, res, next) => {
+  try {
+    const { username, password } = req.body
+    const user = await User.findOne({ username: username.toLowerCase() })
+    if (!user) {
+      res.status(403)
+      return next(new Error('Incorrect Username or Password'))
+    }
+
+    const isMatch = await user.checkPassword(password)
+    if (!isMatch) {
+      res.status(403)
+      return next(new Error('Incorrect Username or Password'))
+    }
+
+    // Optionally strip password before sending user back
+    const userObj = user.toObject()
+    delete userObj.password
+
+    const token = jwt.sign(userObj, process.env.SECRET)
+    return res.status(200).send({ token, user: userObj })
+  } catch (err) {
+    res.status(500)
+    return next(err)
+  }
+})
+
+module.exports = authRouter
+      </code></pre>
+            </div>
+
+            <div class="section">
+                <details>
+                    <summary style="font-size: 1.25rem; margin-bottom: 1rem">
+                        Mongoose 6.12 Lesson
+                    </summary>
+
+                    <div aria-labelledby="mongoose-heading">
+                        <iframe
+                            class="video-embed"
+                            width="1184"
+                            height="666"
+                            src="https://www.youtube.com/embed/sGgyD9z5-pw?list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK"
+                            title="Mongoose 6.12 — Schema Methods"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a
+                                class="btn-primary"
+                                href="https://www.youtube.com/watch?v=sGgyD9z5-pw&list=PL1whVIy6oz7NIpURZoywfBtGH0dN_GafK&index=20"
+                                target="_blank"
+                                rel="noopener"
+                                >Open in Browser</a
+                            >
+                        </p>
+
+                        <h3>Schema Methods</h3>
+                        <p>
+                            Add reusable, model-specific behavior directly on
+                            documents. In this unit we use two:
+                            <code>checkPassword</code> (password verification)
+                            and <code>withoutPassword</code> (omit password
+                            before sending to clients).
+                        </p>
+
+                        <h4>Callback-style Variant (equivalent)</h4>
+                        <pre><code class="language-jsx" role="region" aria-label="Code block">
+// Callback version
+userSchema.methods.checkPassword = function (passwordAttempt, callback) {
+  bcrypt.compare(passwordAttempt, this.password, (err, isMatch) => {
+    if (err) return callback(err)
+    return callback(null, isMatch)
+  })
+}
+          </code></pre>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- Lesson entry script -->
+        <script
+            src="https://vschool-reports.netlify.app/ltp.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-002"
+            data-lesson-title="Schema Method to Check Passwords"
+            data-course-id="Web Development"></script>
+
+        <!-- Feedback script (no visible button included) -->
+        <script
+            src="https://vschool-reports.netlify.app/feedback.js"
+            data-api="https://vschool-reports.netlify.app"
+            data-lesson-id="L6-ADVANCED_FEATURES-002"
+            data-lesson-title="Schema Method to Check Passwords"
+            data-course-id="Web Development"
+            data-button-selector="#myFeedbackBtn"></script>
+    </body>
+</html>
